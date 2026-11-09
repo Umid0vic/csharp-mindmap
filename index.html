@@ -1,0 +1,1653 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#ffffff" />
+  <meta name="color-scheme" content="light dark" />
+  <title>C# Knowledge Map — Interactive SVG</title>
+  <style>
+:root{color-scheme:light;--canvas:#f7f9fd;--paper:#ffffff;--ink:#17223a;--muted:#77849a;--border:#e7ebf2;--violet:#6553de;--shadow:0 14px 45px rgba(34,50,82,.10)}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden}
+body{font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink);background:var(--canvas);font-size:14px}
+button,input{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible,[tabindex]:focus-visible{outline:3px solid #a69dff;outline-offset:3px}button{color:inherit}
+.app{height:100dvh;min-height:450px;display:flex;flex-direction:column}
+.topbar{height:74px;flex-shrink:0;display:flex;align-items:center;gap:22px;padding:0 25px;background:#fff;border-bottom:1px solid var(--border);position:relative;z-index:15}
+.brand{display:flex;align-items:center;gap:11px;min-width:237px}.brand-mark{width:40px;height:40px;border-radius:13px;background:#6050db;color:#fff;display:grid;place-items:center;font-weight:850;font-size:18px;letter-spacing:-1px;box-shadow:0 6px 15px #6050db30}.brand-title{font-size:16px;letter-spacing:-.45px;font-weight:780;white-space:nowrap}.brand-tag{font-size:11px;color:#8792a6;margin-top:3px}
+.search-area{position:relative;max-width:610px;flex:1;min-width:130px}.search-field{height:42px;background:#f6f7fb;border:1px solid #e8eaf2;border-radius:12px;display:flex;align-items:center;gap:10px;padding:0 12px;color:#8c96aa;transition:.16s}.search-area:focus-within .search-field{background:white;border-color:#b8b1ff;box-shadow:0 0 0 3px #efedff}.search-field input{width:100%;border:0;outline:0;background:transparent;color:var(--ink);font-size:13px;min-width:0}.search-field input::placeholder{color:#97a0b0}.shortcut{border:1px solid #e1e4eb;border-radius:5px;padding:2px 6px;font-size:10px;color:#858fa2;white-space:nowrap;background:#fff;font-weight:650}
+.search-results{position:absolute;top:49px;left:0;right:0;background:white;border:1px solid #e5e9f1;border-radius:14px;box-shadow:0 17px 45px #1b275225;max-height:min(470px,65vh);overflow:auto;display:none;padding:7px;z-index:30}.search-results.show{display:block}.search-empty{padding:17px;font-size:12px;color:var(--muted)}.search-row{display:flex;align-items:center;gap:10px;width:100%;border:0;text-align:left;background:white;border-radius:8px;padding:11px;}.search-row:hover,.search-row:focus-visible{background:#f4f5fd}.search-dot{width:8px;height:8px;border-radius:50%;flex:none}.search-name{font-weight:680;font-size:12px}.search-path{font-size:10px;color:#8d98a9;margin-top:3px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}.search-row-body{min-width:0}
+.header-stats{display:flex;align-items:center;gap:10px;margin-left:auto;font-size:12px;color:#727e93;white-space:nowrap}.header-stats strong{font-weight:750;color:#495770}.header-icon-btn{height:36px;padding:0 12px;background:#fff;border:1px solid var(--border);border-radius:10px;color:#5c6880;font-weight:650;font-size:12px}.header-icon-btn:hover{background:#f7f8fe}
+.workspace{position:relative;display:flex;flex:1;min-height:0;overflow:hidden}.sidebar{flex:none;width:250px;background:#fff;border-right:1px solid var(--border);display:flex;flex-direction:column;padding:25px 16px 18px;gap:12px;overflow-y:auto;z-index:4}
+.sidebar-caption{font-size:10px;font-weight:800;color:#9aa4b7;letter-spacing:1.3px;margin:3px 11px 8px}.nav-list{display:flex;flex-direction:column;gap:5px}.nav-item{width:100%;display:flex;align-items:center;gap:11px;border:1px solid transparent;background:transparent;border-radius:11px;padding:11px 10px;text-align:left;font-size:13px;color:#4c596d;font-weight:620;transition:background .15s}.nav-item:hover{background:#f6f7fc}.nav-item.current{background:#f0effe;color:#5547c9;border-color:#e6e2ff}.nav-dot{width:10px;height:10px;border-radius:4px;flex-shrink:0}.nav-name{flex:1}.nav-count{color:#a2acc0;font-size:11px;font-weight:700}
+.sidebar-divider{height:1px;background:var(--border);margin:15px 10px}.aside-helper{margin:0 8px;background:#f6f6ff;border:1px solid #eeebff;border-radius:13px;padding:15px;display:flex;flex-direction:column;gap:9px}.aside-helper-title{font-size:12px;font-weight:790;color:#5547c9}.aside-helper p{margin:0;font-size:11px;line-height:1.65;color:#6d7589}.kbd{font-size:10px;background:#fff;border:1px solid #e0e4ec;border-radius:4px;padding:1px 4px;color:#6f778a}.sidebar-bottom{margin-top:auto;padding:0 8px;font-size:11px;color:#a2acb9;display:flex;gap:7px;align-items:center}
+.map-area{position:relative;flex:1;min-width:0;overflow:hidden;background:radial-gradient(circle at 65% 15%,#edeefe80,transparent 37%),var(--canvas)}.map-area:before{content:"";position:absolute;inset:0;background-image:radial-gradient(#cbd5e4 1px,transparent 1px);background-size:23px 23px;opacity:.48;pointer-events:none}.map-svg{display:block;width:100%;height:100%;position:relative;cursor:grab;touch-action:none}.map-svg.dragging{cursor:grabbing}.map-svg .connector{fill:none;stroke-linecap:round;stroke-width:2.2;stroke-opacity:.46;pointer-events:none}.map-svg .connector.major{stroke-opacity:.7;stroke-width:3.3}.map-svg .node-group{cursor:pointer}.map-svg .node-bg{fill:white;stroke:#e0e5ed;stroke-width:1.1;filter:drop-shadow(0px 3px 7px rgba(31,43,77,.08));transition:fill .16s,stroke .16s}.map-svg .node-group:hover .node-bg{fill:#fafaff;stroke:#a9acf3}.map-svg .node-group.selected .node-bg{stroke:#6050db;stroke-width:2.6;fill:#faf9ff;filter:drop-shadow(0px 5px 13px rgba(85,78,200,.2))}.map-svg .branch .node-bg{stroke-width:1.5}.map-svg .branch.selected .node-bg{stroke-width:2.6}.map-svg .node-label{fill:#27324b;font-size:13px;font-weight:650;dominant-baseline:middle;pointer-events:none}.map-svg .branch .node-label{font-weight:760}.map-svg .node-meta{font-size:10px;font-weight:720;fill:#8290a5;dominant-baseline:middle;pointer-events:none}.map-svg .node-dot{pointer-events:none}.map-svg .toggle-bg{fill:#fff;stroke:#d8deeb;stroke-width:1.2;cursor:pointer}.map-svg .toggle:hover .toggle-bg{fill:#f1f0ff;stroke:#8578ed}.map-svg .toggle-label{font-size:15px;fill:#6f7492;font-weight:500;dominant-baseline:middle;text-anchor:middle;pointer-events:none}.map-svg .root-bg{fill:#5d50d5;stroke:#4f42ca;stroke-width:1;filter:drop-shadow(0 9px 12px rgba(93,80,213,.26))}.map-svg .root-label{fill:white;font-size:23px;font-weight:840;text-anchor:middle;dominant-baseline:middle;pointer-events:none}.map-svg .root-sub{fill:#dfdbff;font-size:10px;text-anchor:middle;dominant-baseline:middle;pointer-events:none}
+.canvas-info{position:absolute;top:25px;left:26px;pointer-events:none;z-index:1}.canvas-eyebrow{font-size:10px;font-weight:810;color:#9083de;letter-spacing:1.6px;text-transform:uppercase}.canvas-heading{font-size:22px;letter-spacing:-.8px;font-weight:800;margin-top:6px;color:#23314d}.canvas-sub{font-size:12px;color:#91a0b2;margin-top:4px;line-height:1.6}.canvas-instruction{position:absolute;left:24px;bottom:24px;background:#fffefeff;border:1px solid #e5e9f1;box-shadow:0 5px 17px rgba(29,49,78,.04);padding:11px 13px;border-radius:10px;font-size:11px;color:#8893a5;z-index:1;pointer-events:none}.canvas-instruction strong{color:#657189}
+.control-panel{position:absolute;right:23px;bottom:24px;display:flex;gap:4px;background:white;border:1px solid #e4e9f1;border-radius:13px;padding:5px;box-shadow:0 8px 27px rgba(33,53,95,.09);z-index:2}.tool-btn{height:35px;min-width:35px;background:white;border:0;border-radius:8px;display:grid;place-items:center;font-size:17px;color:#606d80;font-weight:500}.tool-btn:hover{background:#f3f2fc;color:#554ac6}.zoom-value{display:grid;place-items:center;min-width:53px;font-size:11px;font-weight:780;color:#526176}.tool-sep{width:1px;background:#e9ecf2;margin:5px 3px}
+.panel-shade{position:absolute;inset:0;background:rgba(29,33,53,.06);z-index:5;display:none}.details{position:absolute;right:0;top:0;bottom:0;display:flex;flex-direction:column;background:#fff;border-left:1px solid #e6eaf3;width:420px;max-width:calc(100vw - 42px);z-index:6;box-shadow:-14px 0 48px rgba(26,36,67,.12);transform:translateX(104%);transition:transform .26s cubic-bezier(.23,.74,.28,1);visibility:hidden}.details.open{transform:translateX(0);visibility:visible}.details-header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:24px 26px 10px}.details-caption{font-size:10px;color:#959caf;font-weight:820;letter-spacing:1.45px;text-transform:uppercase}.panel-close{height:32px;width:32px;background:#f4f6fa;border:0;border-radius:9px;color:#77839b;display:grid;place-items:center;font-size:21px}.panel-close:hover{background:#e9edfa}.details-scroll{overflow:auto;padding:17px 26px 35px;flex:1}.crumb{font-size:11px;color:#8c98ab;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;line-height:1.6}.detail-tag{display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:760;border-radius:7px;padding:6px 9px;margin-top:28px}.detail-tag .tag-dot{width:7px;height:7px;border-radius:50%}.detail-title{font-size:27px;line-height:1.2;letter-spacing:-1.1px;font-weight:830;color:#1b2841;margin:17px 0 0;overflow-wrap:anywhere}.section-title{font-size:11px;text-transform:uppercase;letter-spacing:1.2px;color:#9aa4b5;font-weight:810;margin:31px 0 11px}.detail-desc{font-size:14px;line-height:1.85;color:#4e5d73;margin:0}.example-top{display:flex;align-items:center;justify-content:space-between;gap:7px}.code-shell{border-radius:12px;background:#131b2d;border:1px solid #1e2c42;overflow:hidden}.code-head{height:40px;display:flex;align-items:center;justify-content:space-between;gap:7px;padding:0 13px;border-bottom:1px solid #26354a;color:#97a9c7;font-size:11px;font-weight:710}.code-lang{display:flex;align-items:center;gap:7px}.code-lang:before{content:"";height:7px;width:7px;border-radius:3px;background:#8374ef}.copy-btn{font-size:11px;border:1px solid #34415a;background:#222f46;color:#c6d5ed;border-radius:7px;padding:6px 9px}.copy-btn:hover{background:#334461}.code-body{padding:18px 15px;margin:0;overflow:auto;white-space:pre;font-size:12px;line-height:1.85;color:#e2e9f5;font-family:"Cascadia Code","Fira Code",Consolas,"Liberation Mono",monospace;tab-size:4}.code-key{color:#c5a5ff}.code-str{color:#9bd5af}.code-com{color:#8495a9}.code-num{color:#f2c98b}
+.related-list{display:flex;flex-wrap:wrap;gap:7px}.related-btn{border:1px solid #e4e7ef;border-radius:8px;background:#fafbfd;color:#54627a;font-size:11px;font-weight:670;padding:9px 11px;text-align:left}.related-btn:hover{background:#efefff;color:#5749d3;border-color:#d7d2ff}.related-divider{border:0;border-top:1px solid #edf0f5;margin:25px 0 0}.muted-tip{font-size:11px;line-height:1.7;color:#9da7b8;margin-top:15px}
+@media(max-width:1150px){.sidebar{width:215px}.brand{min-width:210px}.topbar{gap:16px}.canvas-info{left:19px;top:20px}}
+@media(max-width:850px){.sidebar{display:none}.brand{min-width:0}.brand-tag{display:none}.topbar{height:65px;padding:0 14px;gap:11px}.header-stats{display:none}.canvas-heading{font-size:18px}.canvas-instruction{display:none}.details{width:420px}.control-panel{right:12px;bottom:14px}.canvas-info{top:16px;left:16px}}
+@media(max-width:520px){.brand-title{display:none}.brand-mark{height:36px;width:36px}.brand{min-width:auto}.topbar{gap:10px}.search-area{min-width:0}.header-icon-btn{display:none}.shortcut{display:none}.canvas-sub{font-size:11px}.details{width:100%;max-width:100vw}.details-scroll{padding:12px 22px 30px}.details-header{padding:17px 22px 10px}.panel-shade.show{display:block}.control-panel{bottom:12px}.canvas-info{pointer-events:none}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important}}
+
+@media(min-width:851px){.map-area.panel-active .control-panel{right:442px}}
+@media(min-width:851px) and (max-width:1150px){.map-area.panel-active .control-panel{right:auto;left:18px}}
+
+
+/* Pre-rendered fallback. The document remains useful in previews that disable JavaScript. */
+.static-map{position:absolute;z-index:2;inset:126px 22px 74px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;pointer-events:auto}
+.static-map-intro{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;font-weight:800;color:#949bb0;margin-bottom:16px}
+.static-center{display:flex;flex-direction:column;align-items:center;justify-content:center;background:#6050db;color:white;text-decoration:none;border-radius:16px;padding:12px 28px;box-shadow:0 10px 25px #6050db25;font-size:28px;font-weight:840;min-width:132px}
+.static-center small{font-size:10px;color:#e6e1ff;letter-spacing:.1px;font-weight:600;margin-top:4px}
+.static-trunk{height:30px;width:2px;background:linear-gradient(#6553de,#c5ccdb)}
+.static-branches{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;width:min(780px,100%);padding-top:18px;border-top:2px solid #d7ddec}
+.static-branch{display:flex;flex-direction:column;gap:5px;align-items:flex-start;justify-content:center;min-width:0;min-height:79px;padding:13px 16px;background:#fff;text-decoration:none;border:1px solid #e5e8f1;border-left:5px solid var(--branch);border-radius:13px;box-shadow:0 6px 22px #28365608;position:relative;color:#27314c}
+.static-branch:before{content:"";position:absolute;height:18px;left:50%;width:2px;top:-18px;background:#d7ddec}
+.static-branch span{font-size:16px;font-weight:760}
+.static-branch small{font-size:11px;color:#8793aa;font-weight:600}
+.static-branch:hover,.static-branch:focus-visible{box-shadow:0 7px 24px #252f6030;outline:2px solid var(--branch);outline-offset:1px}
+.static-hint{margin:23px auto 0;max-width:590px;color:#8995aa;text-align:center;font-size:12px;line-height:1.65}
+.static-panels{position:absolute;inset:0;z-index:10;pointer-events:none}
+.static-detail{display:none;position:absolute;top:0;bottom:0;right:0;width:min(460px,100%);background:#fff;border-left:1px solid #e7ebf2;overflow-y:auto;padding:24px;box-shadow:-10px 0 28px #2a355522;pointer-events:auto}
+.static-detail:target{display:block}
+.static-detail-top{display:flex;justify-content:space-between;align-items:center;color:#9ca5b7;font-size:11px;font-weight:800;letter-spacing:1.25px}
+.static-close{display:grid;place-items:center;width:36px;height:36px;text-decoration:none;border-radius:10px;background:#f1f3fa;color:#586377;font-size:23px}
+.static-category{display:inline-block;margin-top:34px;color:var(--branch);background:#f4f5fb;padding:7px 10px;border-radius:8px;font-size:12px;font-weight:750}
+.static-detail h2{font-size:28px;line-height:1.2;letter-spacing:-.7px;margin:15px 0 19px}
+.static-description{font-size:15px;color:#58677e;line-height:1.75}
+.static-label{margin:29px 0 11px;color:#98a4b7;letter-spacing:1px;font-size:11px;font-weight:780}
+.static-detail pre{border:1px solid #22324d;background:#131b2d;color:#e3e9f6;border-radius:11px;margin:0;padding:19px;white-space:pre-wrap;overflow-wrap:anywhere;font:12px/1.65 ui-monospace,SFMono-Regular,Consolas,monospace}
+.static-links{display:flex;flex-wrap:wrap;gap:8px;padding-bottom:22px}
+.static-links a{font-size:12px;font-weight:650;border:1px solid #e0e5ef;border-radius:8px;padding:8px 10px;color:#4e587b;text-decoration:none;background:#f9fafd}
+.static-links a:active,.static-links a:hover{background:#f0efff;border-color:#b4acf6}
+.js-ready .static-map,.js-ready .static-panels{display:none}
+@media(max-width:520px){
+ .static-map{inset:128px 14px 67px;justify-content:flex-start;padding-top:max(25px,5vh)}
+ .static-map-intro{font-size:10px;margin-bottom:12px}
+ .static-center{font-size:24px;padding:10px 27px}
+ .static-trunk{height:23px}
+ .static-branches{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 10px;padding-top:15px}
+ .static-branch{min-height:77px;padding:10px 11px;border-radius:11px}
+ .static-branch:before{height:15px;top:-15px}
+ .static-branch span{font-size:14px}
+ .static-hint{font-size:11px;margin-top:17px;line-height:1.55}
+ .static-detail{padding:20px}
+}
+@media(max-height:650px) and (max-width:520px){.static-map{padding-top:0}.static-center{padding:7px 20px}.static-branch{min-height:57px;padding:8px}.static-hint{margin-top:8px}}
+
+
+.mobile-diagram-toggle,.mobile-back{display:none}
+@media(max-width:520px){
+ .js-ready:not(.diagram-mode) .static-map{display:flex}
+ .js-ready:not(.diagram-mode) .map-svg,.js-ready:not(.diagram-mode) .control-panel{display:none}
+ .js-ready:not(.diagram-mode) .mobile-diagram-toggle{display:block;flex:none;border:1px solid #cbc6ff;background:#f0edff;color:#5746d2;font-weight:740;font-size:12px;padding:10px 16px;border-radius:10px;margin-top:15px}
+ .js-ready.diagram-mode .mobile-back{display:block;position:absolute;z-index:3;left:16px;top:104px;border:1px solid #e2e5ef;border-radius:10px;padding:9px 12px;background:white;color:#5447bb;font-size:12px;font-weight:740;box-shadow:0 3px 12px #323e671a}
+}
+
+
+/* Theme tokens. System is the default and remains usable without JavaScript. */
+:root {
+  color-scheme:light;
+  --t-canvas:#f7f9fd;
+  --t-paper:#ffffff;
+  --t-ink:#17223a;
+  --t-body:#4e5d73;
+  --t-strong:#1b2841;
+  --t-muted:#77849a;
+  --t-line:#e5e9f1;
+  --t-surface:#f6f7fb;
+  --t-hover:#f0efff;
+  --t-active:#efedff;
+  --t-active-ink:#5547c9;
+  --t-map-dot:#cbd5e4;
+  --t-map-glow:rgba(237,238,254,.56);
+  --t-node:#ffffff;
+  --t-node-hover:#fafaff;
+  --t-node-selected:#faf9ff;
+  --t-node-ink:#27324b;
+  --t-node-quiet:#8290a5;
+  --t-shadow:0 12px 40px rgba(34,50,82,.10);
+  --t-field-ring:rgba(101,83,222,.12);
+  --t-shade:rgba(29,33,53,.08);
+  --t-code-bg:#131b2d;
+  --t-code-line:#26354a;
+  --t-code-head:#97a9c7;
+  --t-code-button:#222f46;
+  --t-code-button-hover:#334461;
+  --t-code-text:#e2e9f5;
+  --t-hint:#8893a5;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not(:has(#theme-light:checked)):not([data-theme="light"]) {
+    color-scheme:dark;
+  --t-canvas:#0c1321;
+  --t-paper:#141e2e;
+  --t-ink:#e6edfa;
+  --t-body:#c0cee0;
+  --t-strong:#f1f5ff;
+  --t-muted:#9aacc4;
+  --t-line:#303c52;
+  --t-surface:#1d293d;
+  --t-hover:#29344d;
+  --t-active:#302c57;
+  --t-active-ink:#c2b9ff;
+  --t-map-dot:#50627d;
+  --t-map-glow:rgba(81,74,160,.19);
+  --t-node:#1c2a40;
+  --t-node-hover:#293750;
+  --t-node-selected:#323153;
+  --t-node-ink:#edf2ff;
+  --t-node-quiet:#a9bbd2;
+  --t-shadow:0 12px 45px rgba(0,0,0,.35);
+  --t-field-ring:rgba(149,130,255,.2);
+  --t-shade:rgba(0,0,0,.49);
+  --t-code-bg:#0b1324;
+  --t-code-line:#293953;
+  --t-code-head:#afc2de;
+  --t-code-button:#23334c;
+  --t-code-button-hover:#3b4e6b;
+  --t-code-text:#e6eaf7;
+  --t-hint:#a7b5cb;
+  }
+}
+:root:has(#theme-dark:checked),:root[data-theme="dark"] {
+  color-scheme:dark;
+  --t-canvas:#0c1321;
+  --t-paper:#141e2e;
+  --t-ink:#e6edfa;
+  --t-body:#c0cee0;
+  --t-strong:#f1f5ff;
+  --t-muted:#9aacc4;
+  --t-line:#303c52;
+  --t-surface:#1d293d;
+  --t-hover:#29344d;
+  --t-active:#302c57;
+  --t-active-ink:#c2b9ff;
+  --t-map-dot:#50627d;
+  --t-map-glow:rgba(81,74,160,.19);
+  --t-node:#1c2a40;
+  --t-node-hover:#293750;
+  --t-node-selected:#323153;
+  --t-node-ink:#edf2ff;
+  --t-node-quiet:#a9bbd2;
+  --t-shadow:0 12px 45px rgba(0,0,0,.35);
+  --t-field-ring:rgba(149,130,255,.2);
+  --t-shade:rgba(0,0,0,.49);
+  --t-code-bg:#0b1324;
+  --t-code-line:#293953;
+  --t-code-head:#afc2de;
+  --t-code-button:#23334c;
+  --t-code-button-hover:#3b4e6b;
+  --t-code-text:#e6eaf7;
+  --t-hint:#a7b5cb;
+}
+:root:has(#theme-light:checked),:root[data-theme="light"] {
+  color-scheme:light;
+  --t-canvas:#f7f9fd;
+  --t-paper:#ffffff;
+  --t-ink:#17223a;
+  --t-body:#4e5d73;
+  --t-strong:#1b2841;
+  --t-muted:#77849a;
+  --t-line:#e5e9f1;
+  --t-surface:#f6f7fb;
+  --t-hover:#f0efff;
+  --t-active:#efedff;
+  --t-active-ink:#5547c9;
+  --t-map-dot:#cbd5e4;
+  --t-map-glow:rgba(237,238,254,.56);
+  --t-node:#ffffff;
+  --t-node-hover:#fafaff;
+  --t-node-selected:#faf9ff;
+  --t-node-ink:#27324b;
+  --t-node-quiet:#8290a5;
+  --t-shadow:0 12px 40px rgba(34,50,82,.10);
+  --t-field-ring:rgba(101,83,222,.12);
+  --t-shade:rgba(29,33,53,.08);
+  --t-code-bg:#131b2d;
+  --t-code-line:#26354a;
+  --t-code-head:#97a9c7;
+  --t-code-button:#222f46;
+  --t-code-button-hover:#334461;
+  --t-code-text:#e2e9f5;
+  --t-hint:#8893a5;
+}
+/* Apply one palette to the HTML panels, controls, search, nodes, and the fallback. */
+body {background:var(--t-canvas);color:var(--t-ink)}
+.topbar,.sidebar,.details,.search-results,.search-row,.control-panel,.tool-btn,
+.canvas-instruction,.static-branch,.static-detail {background:var(--t-paper);color:var(--t-ink)}
+.topbar,.sidebar,.details,.search-results,.control-panel,.canvas-instruction,.static-branch,.static-detail,
+.header-icon-btn,.related-btn,.panel-close,.static-close,.static-links a {border-color:var(--t-line)}
+.brand-title,.header-stats strong,.canvas-heading,.detail-title,.static-detail h2,
+.static-branch span,.static-detail-top strong {color:var(--t-strong)}
+.brand-tag,.header-stats,.shortcut,.search-path,.sidebar-caption,.nav-count,.canvas-sub,.canvas-instruction,
+.details-caption,.crumb,.section-title,.static-label,.static-branch small,.static-hint,.muted-tip,
+.static-detail-top,.static-map-intro,.static-close {color:var(--t-muted)}
+.search-field,.aside-helper,.kbd,.shortcut,.panel-close,.static-close,.static-category,
+.static-links a,.related-btn,.header-icon-btn {background:var(--t-surface);border-color:var(--t-line)}
+.search-field,.search-field input {color:var(--t-ink)}
+.search-field input::placeholder{color:var(--t-muted);opacity:.85}
+.search-area:focus-within .search-field{background:var(--t-paper);border-color:#9385ef;box-shadow:0 0 0 3px var(--t-field-ring)}
+.search-row:hover,.search-row:focus-visible,.header-icon-btn:hover,.tool-btn:hover,.panel-close:hover,
+.static-links a:hover,.static-close:hover,.related-btn:hover,.nav-item:hover {background:var(--t-hover)}
+.search-name,.nav-item,.tool-btn,.zoom-value,.header-icon-btn,.static-links a,.related-btn,
+.static-close {color:var(--t-body)}
+.nav-item.current {background:var(--t-active);color:var(--t-active-ink);border-color:var(--t-line)}
+.aside-helper-title,.canvas-eyebrow {color:var(--t-active-ink)}
+.aside-helper p,.static-description,.detail-desc {color:var(--t-body)}
+.related-btn:hover,.nav-item.current,.static-links a:hover {color:var(--t-active-ink)}
+.sidebar-divider,.tool-sep {background:var(--t-line)}
+.related-divider {border-color:var(--t-line)}
+.map-area {background:radial-gradient(circle at 65% 15%,var(--t-map-glow),transparent 37%),var(--t-canvas)}
+.map-area:before {background-image:radial-gradient(var(--t-map-dot) 1px,transparent 1px);opacity:.36}
+.map-svg .node-bg {fill:var(--t-node);stroke:var(--t-line);filter:drop-shadow(0 3px 7px rgba(0,0,0,.11))}
+.map-svg .node-group:hover .node-bg {fill:var(--t-node-hover);stroke:#9185e9}
+.map-svg .node-group.selected .node-bg {fill:var(--t-node-selected);stroke:#9789ff}
+.map-svg .node-label {fill:var(--t-node-ink)}
+.map-svg .node-meta,.map-svg .toggle-label {fill:var(--t-node-quiet)}
+.map-svg .toggle-bg {fill:var(--t-paper);stroke:var(--t-line)}
+.map-svg .toggle:hover .toggle-bg {fill:var(--t-hover)}
+.canvas-instruction strong {color:var(--t-body)}
+.static-trunk {background:linear-gradient(#6553de,var(--t-line))}
+.static-branches {border-top-color:var(--t-line)}
+.static-branch:before {background:var(--t-line)}
+.static-category {background:var(--t-surface)}
+.static-detail pre,.code-shell {background:var(--t-code-bg);border-color:var(--t-code-line);color:var(--t-code-text)}
+.code-head {border-color:var(--t-code-line);color:var(--t-code-head)}
+.copy-btn {background:var(--t-code-button);color:var(--t-code-text);border-color:var(--t-code-line)}
+.copy-btn:hover {background:var(--t-code-button-hover)}
+.code-body {color:var(--t-code-text)}
+.panel-shade {background:var(--t-shade)}
+.details {box-shadow:var(--t-shadow)}
+.static-branch,.control-panel,.search-results,.static-detail {box-shadow:var(--t-shadow)}
+.js-ready:not(.diagram-mode) .mobile-diagram-toggle {background:var(--t-active);color:var(--t-active-ink);border-color:var(--t-line)}
+.js-ready.diagram-mode .mobile-back {background:var(--t-panel,var(--t-paper));color:var(--t-active-ink);border-color:var(--t-line)}
+/* CSS-only theme selector. Works even if JavaScript is blocked by the preview. */
+.theme-picker{position:relative;flex:none;z-index:40}
+.theme-picker summary{list-style:none;display:flex;align-items:center;justify-content:center;gap:7px;
+  width:40px;height:40px;border:1px solid var(--t-line);border-radius:12px;
+  background:var(--t-surface);color:var(--t-body);cursor:pointer;user-select:none}
+.theme-picker summary::-webkit-details-marker {display:none}
+.theme-picker summary:hover,.theme-picker[open] summary{background:var(--t-hover);color:var(--t-active-ink)}
+.theme-picker summary:focus-visible {outline:3px solid #9789ff;outline-offset:2px}
+.theme-picker summary svg {width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.theme-menu{position:absolute;right:0;top:calc(100% + 10px);width:205px;padding:10px;
+  background:var(--t-paper);border:1px solid var(--t-line);box-shadow:var(--t-shadow);border-radius:14px}
+.theme-menu-title{padding:7px 9px 11px;font-size:10px;letter-spacing:1.2px;font-weight:800;color:var(--t-muted)}
+.theme-choice{position:relative;display:flex;align-items:center;gap:9px;width:100%;padding:11px 9px;
+  border:1px solid transparent;border-radius:9px;cursor:pointer;color:var(--t-body);font-weight:660;font-size:12px}
+.theme-choice:hover{background:var(--t-surface)}
+.theme-choice:has(input:checked){color:var(--t-active-ink);background:var(--t-active);border-color:var(--t-line)}
+.theme-choice input{appearance:none;-webkit-appearance:none;width:15px;height:15px;border:1.5px solid var(--t-muted);border-radius:50%;margin:0;flex:none}
+.theme-choice input:checked{border:4px solid var(--t-active-ink)}
+.theme-choice input:focus-visible{outline:3px solid #9789ff;outline-offset:2px}
+.theme-choice span{flex:1}
+.theme-choice small{font-size:10px;color:var(--t-muted);font-weight:500}
+@media(max-width:520px){.theme-picker summary{height:36px;width:36px;border-radius:10px}.theme-menu{right:-2px}}
+
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand"><span class="brand-mark">C#</span><div><div class="brand-title">C# Knowledge Map</div><div class="brand-tag">An interactive language reference</div></div></div>
+    <div class="search-area">
+      <div class="search-field">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="10.9" cy="10.9" r="7.1"/><path d="m16.1 16.1 5.2 5.2"/></svg>
+        <input id="searchInput" type="search" autocomplete="off" aria-label="Search topics" placeholder="Search types, operators, LINQ, and more..." />
+        <span class="shortcut">Ctrl K</span>
+      </div><div id="searchResults" class="search-results" role="listbox" aria-label="Search results"></div>
+    </div>
+    <div class="header-stats"><strong>149</strong> topics <span style="color:#cbd0d9">·</span> <span><strong id="visibleCount">7</strong> visible</span></div>
+    <button id="expandAll" class="header-icon-btn" title="Expand every topic">Expand all</button>
+    <details class="theme-picker" id="themePicker">
+      <summary aria-label="Change color theme" title="Change color theme">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 15.3A8.2 8.2 0 0 1 8.7 4a8.5 8.5 0 1 0 11.3 11.3Z"/><path d="m17 3 .45 1.55L19 5l-1.55.45L17 7l-.45-1.55L15 5l1.55-.45L17 3Z"/></svg>
+      </summary>
+      <div class="theme-menu" role="group" aria-label="Color theme">
+        <div class="theme-menu-title">APPEARANCE</div>
+        <label class="theme-choice"><input type="radio" id="theme-auto" name="color-theme" value="auto" checked><span>System</span><small>Default</small></label>
+        <label class="theme-choice"><input type="radio" id="theme-light" name="color-theme" value="light"><span>Light</span><small>☀</small></label>
+        <label class="theme-choice"><input type="radio" id="theme-dark" name="color-theme" value="dark"><span>Dark</span><small>☾</small></label>
+      </div>
+    </details>
+  </header>
+  <div class="workspace">
+    <aside class="sidebar" aria-label="Main sections">
+      <div><div class="sidebar-caption">EXPLORE TOPICS</div><nav class="nav-list" id="navList"></nav></div>
+      <div class="sidebar-divider"></div>
+      <div class="aside-helper"><div class="aside-helper-title">How to explore</div><p>Click a topic to read its explanation and C# example. Use the small <b>+</b> button to expand a branch.</p><p>Drag the canvas to pan. Use your mouse wheel or the controls to zoom.</p><p><span class="kbd">Ctrl</span> + <span class="kbd">K</span> searches all 149 topics.</p></div>
+      <div class="sidebar-bottom"><span style="height:7px;width:7px;border-radius:50%;background:#2cb89a"></span>100% SVG · No images or libraries</div>
+    </aside>
+    <main class="map-area" id="mapArea" aria-label="Interactive C# mind map">
+      <div class="canvas-info"><div class="canvas-eyebrow">EXPLORE C#</div><div class="canvas-heading">The language, mapped.</div><div class="canvas-sub">Follow a branch. Discover a concept. See it in code.</div></div>
+      <div class="static-map" id="staticMap" aria-label="C# topic map fallback">
+<div class="static-map-intro">Interactive C# topic map</div>
+<a class="static-center" href="#topic-n001">C#<small>149 concepts</small></a>
+<div class="static-trunk" aria-hidden="true"></div>
+<div class="static-branches"><a class="static-branch" href="#topic-n002" style="--branch:#8969e7"><span>Expressions</span><small>2 topics</small></a><a class="static-branch" href="#topic-n004" style="--branch:#4886f1"><span>Collections</span><small>13 topics</small></a><a class="static-branch" href="#topic-n017" style="--branch:#19aa87"><span>Operators</span><small>13 topics</small></a><a class="static-branch" href="#topic-n030" style="--branch:#e0a72e"><span>LINQ</span><small>41 topics</small></a><a class="static-branch" href="#topic-n086" style="--branch:#ed656d"><span>Type System</span><small>64 topics</small></a><a class="static-branch" href="#topic-n071" style="--branch:#ef9655"><span>Statements</span><small>15 topics</small></a></div><p class="static-hint">Select a branch to see explanations, C# examples, and related topics. Full zoom and drag controls are available in a browser that runs JavaScript.</p><button class="mobile-diagram-toggle" id="showDiagram" type="button">Open zoomable diagram ↗</button></div>
+            <button id="showBranches" type="button" class="mobile-back">← Browse branches</button>
+      <svg id="mapSvg" class="map-svg" role="application" aria-label="Interactive map with pan, zoom, and selectable C# topics"><g id="stage"><g id="edgesLayer"></g><g id="nodesLayer"></g></g></svg>
+      <div class="static-panels" aria-label="Topic descriptions"><section class="static-detail" id="topic-n001" style="--branch:#6553de">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">C#</div>
+<h2>C#</h2><p class="static-description">Explore C# types, expressions, collections, operators, control flow, and LINQ. Select a topic to read a short explanation and code example.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>Console.WriteLine(&quot;Hello, C#!&quot;);</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n002">Expressions</a><a href="#topic-n004">Collections</a><a href="#topic-n017">Operators</a><a href="#topic-n030">LINQ</a><a href="#topic-n071">Statements</a><a href="#topic-n086">Type System</a></nav>
+</section><section class="static-detail" id="topic-n002" style="--branch:#8969e7">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Expressions</div>
+<h2>Expressions</h2><p class="static-description">An expression evaluates to a value, object, or variable. Expressions can appear in assignments, conditions, and method calls.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>int total = price * quantity;</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n001">← C#</a><a href="#topic-n003">Lambda Expressions</a></nav>
+</section><section class="static-detail" id="topic-n003" style="--branch:#8969e7">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Expressions</div>
+<h2>Lambda Expressions</h2><p class="static-description">A lambda expression defines an anonymous function with the =&gt; operator. You can pass a lambda to LINQ methods and delegates.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>Func&lt;int, int&gt; square = x =&gt; x * x;
+Console.WriteLine(square(5)); // 25</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n002">← Expressions</a></nav>
+</section><section class="static-detail" id="topic-n004" style="--branch:#4886f1">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Collections</div>
+<h2>Collections</h2><p class="static-description">Collections store multiple items. Choose a collection based on item type, ordering, lookup needs, and performance.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>var names = new List&lt;string&gt; { &quot;Ada&quot;, &quot;Lin&quot; };</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n001">← C#</a><a href="#topic-n005">Generic</a><a href="#topic-n011">Non-generic</a></nav>
+</section><section class="static-detail" id="topic-n005" style="--branch:#4886f1">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Collections</div>
+<h2>Generic</h2><p class="static-description">Generic collections specify element types at compile time. They provide type safety without manual casts.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>List&lt;int&gt; numbers = new() { 1, 2, 3 };</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n004">← Collections</a><a href="#topic-n006">List</a><a href="#topic-n007">SortedList</a><a href="#topic-n008">Queue</a><a href="#topic-n009">Stack</a><a href="#topic-n010">Dictionary</a></nav>
+</section><section class="static-detail" id="topic-n006" style="--branch:#4886f1">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Collections</div>
+<h2>List</h2><p class="static-description">List&lt;T&gt; is a resizable, ordered sequence of elements.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>var scores = new List&lt;int&gt; { 4, 7 };
+scores.Add(9);</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n005">← Generic</a><a href="#topic-n007">SortedList</a><a href="#topic-n008">Queue</a><a href="#topic-n009">Stack</a><a href="#topic-n010">Dictionary</a></nav>
+</section><section class="static-detail" id="topic-n007" style="--branch:#4886f1">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Collections</div>
+<h2>SortedList</h2><p class="static-description">SortedList&lt;TKey,TValue&gt; stores key-value pairs sorted by key.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>var ranks = new SortedList&lt;int, string&gt; { [2] = &quot;B&quot;, [1] = &quot;A&quot; };</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n005">← Generic</a><a href="#topic-n006">List</a><a href="#topic-n008">Queue</a><a href="#topic-n009">Stack</a><a href="#topic-n010">Dictionary</a></nav>
+</section><section class="static-detail" id="topic-n008" style="--branch:#4886f1">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Collections</div>
+<h2>Queue</h2><p class="static-description">Queue&lt;T&gt; uses first-in, first-out ordering.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>var jobs = new Queue&lt;string&gt;();
+jobs.Enqueue(&quot;Build&quot;);
+string next = jobs.Dequeue();</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n005">← Generic</a><a href="#topic-n006">List</a><a href="#topic-n007">SortedList</a><a href="#topic-n009">Stack</a><a href="#topic-n010">Dictionary</a></nav>
+</section><section class="static-detail" id="topic-n009" style="--branch:#4886f1">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Collections</div>
+<h2>Stack</h2><p class="static-description">Stack&lt;T&gt; uses last-in, first-out ordering.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>var history = new Stack&lt;string&gt;();
+history.Push(&quot;Page 1&quot;);
+string last = history.Pop();</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n005">← Generic</a><a href="#topic-n006">List</a><a href="#topic-n007">SortedList</a><a href="#topic-n008">Queue</a><a href="#topic-n010">Dictionary</a></nav>
+</section><section class="static-detail" id="topic-n010" style="--branch:#4886f1">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Collections</div>
+<h2>Dictionary</h2><p class="static-description">Dictionary&lt;TKey,TValue&gt; associates unique keys with values for fast lookup.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>var ages = new Dictionary&lt;string, int&gt; { [&quot;Ada&quot;] = 30 };
+int age = ages[&quot;Ada&quot;];</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n005">← Generic</a><a href="#topic-n006">List</a><a href="#topic-n007">SortedList</a><a href="#topic-n008">Queue</a><a href="#topic-n009">Stack</a></nav>
+</section><section class="static-detail" id="topic-n011" style="--branch:#4886f1">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Collections</div>
+<h2>Non-generic</h2><p class="static-description">Non-generic collections store values as object. Prefer generic collections for new, strongly typed code.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>System.Collections.ArrayList values = new();
+values.Add(10);</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n004">← Collections</a><a href="#topic-n012">ArrayList</a><a href="#topic-n013">HashTable</a><a href="#topic-n014">SortedList</a><a href="#topic-n015">Stack</a><a href="#topic-n016">Queue</a></nav>
+</section><section class="static-detail" id="topic-n012" style="--branch:#4886f1">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Collections</div>
+<h2>ArrayList</h2><p class="static-description">ArrayList is a resizable, non-generic list. Elements are stored as object.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>var values = new System.Collections.ArrayList { 1, &quot;two&quot; };</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n011">← Non-generic</a><a href="#topic-n013">HashTable</a><a href="#topic-n014">SortedList</a><a href="#topic-n015">Stack</a><a href="#topic-n016">Queue</a></nav>
+</section><section class="static-detail" id="topic-n013" style="--branch:#4886f1">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Collections</div>
+<h2>HashTable</h2><p class="static-description">Hashtable is a non-generic key-value collection. Keys are unique.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>var table = new System.Collections.Hashtable();
+table[&quot;id&quot;] = 42;</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n011">← Non-generic</a><a href="#topic-n012">ArrayList</a><a href="#topic-n014">SortedList</a><a href="#topic-n015">Stack</a><a href="#topic-n016">Queue</a></nav>
+</section><section class="static-detail" id="topic-n014" style="--branch:#4886f1">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Collections</div>
+<h2>SortedList</h2><p class="static-description">System.Collections.SortedList is a non-generic, key-sorted collection.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>var items = new System.Collections.SortedList();
+items.Add(1, &quot;First&quot;);</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n011">← Non-generic</a><a href="#topic-n012">ArrayList</a><a href="#topic-n013">HashTable</a><a href="#topic-n015">Stack</a><a href="#topic-n016">Queue</a></nav>
+</section><section class="static-detail" id="topic-n015" style="--branch:#4886f1">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Collections</div>
+<h2>Stack</h2><p class="static-description">System.Collections.Stack is a non-generic last-in, first-out collection.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>var stack = new System.Collections.Stack();
+stack.Push(&quot;A&quot;);
+var item = stack.Pop();</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n011">← Non-generic</a><a href="#topic-n012">ArrayList</a><a href="#topic-n013">HashTable</a><a href="#topic-n014">SortedList</a><a href="#topic-n016">Queue</a></nav>
+</section><section class="static-detail" id="topic-n016" style="--branch:#4886f1">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Collections</div>
+<h2>Queue</h2><p class="static-description">System.Collections.Queue is a non-generic first-in, first-out collection.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>var queue = new System.Collections.Queue();
+queue.Enqueue(&quot;A&quot;);
+var item = queue.Dequeue();</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n011">← Non-generic</a><a href="#topic-n012">ArrayList</a><a href="#topic-n013">HashTable</a><a href="#topic-n014">SortedList</a><a href="#topic-n015">Stack</a></nav>
+</section><section class="static-detail" id="topic-n017" style="--branch:#19aa87">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Operators</div>
+<h2>Operators</h2><p class="static-description">Operators perform calculations, comparisons, assignments, and other operations on operands.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>int result = (4 + 6) * 2;</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n001">← C#</a><a href="#topic-n018">Arithmetic</a><a href="#topic-n020">Assignment</a><a href="#topic-n022">Bitwise</a><a href="#topic-n024">Overflow</a><a href="#topic-n027">Overloading</a><a href="#topic-n028">Relational</a></nav>
+</section><section class="static-detail" id="topic-n018" style="--branch:#19aa87">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Operators</div>
+<h2>Arithmetic</h2><p class="static-description">Arithmetic operators calculate numeric results: +, -, *, /, and %.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>int remainder = 10 % 3; // 1</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n017">← Operators</a><a href="#topic-n019">+, -, *, /, %</a></nav>
+</section><section class="static-detail" id="topic-n019" style="--branch:#19aa87">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Operators</div>
+<h2>+, -, *, /, %</h2><p class="static-description">Use + to add, - to subtract, * to multiply, / to divide, and % to calculate the remainder.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>int result = 7 / 2; // 3 (integer division)</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n018">← Arithmetic</a></nav>
+</section><section class="static-detail" id="topic-n020" style="--branch:#19aa87">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Operators</div>
+<h2>Assignment</h2><p class="static-description">Assignment operators assign or update values. Examples include =, +=, -=, and *=.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>int count = 2;
+count += 3; // 5</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n017">← Operators</a><a href="#topic-n021">=</a></nav>
+</section><section class="static-detail" id="topic-n021" style="--branch:#19aa87">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Operators</div>
+<h2>=</h2><p class="static-description">The = operator assigns the right-hand value to a variable or property.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>int items = 5;</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n020">← Assignment</a></nav>
+</section><section class="static-detail" id="topic-n022" style="--branch:#19aa87">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Operators</div>
+<h2>Bitwise</h2><p class="static-description">Bitwise operators manipulate bits in integer values. Shift operators move bits left or right.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>int flags = 0b0101 | 0b0010; // 0b0111</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n017">← Operators</a><a href="#topic-n023">&lt;&lt;, &gt;&gt;, &lt;&lt;=, &gt;&gt;=, &amp;, |, ^</a></nav>
+</section><section class="static-detail" id="topic-n023" style="--branch:#19aa87">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Operators</div>
+<h2>&lt;&lt;, &gt;&gt;, &lt;&lt;=, &gt;&gt;=, &amp;, |, ^</h2><p class="static-description">Bitwise operators support shifts, bitwise AND, OR, XOR, and related assignments.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>int doubled = 3 &lt;&lt; 1; // 6</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n022">← Bitwise</a></nav>
+</section><section class="static-detail" id="topic-n024" style="--branch:#19aa87">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Operators</div>
+<h2>Overflow</h2><p class="static-description">A checked context detects overflow for applicable integral arithmetic and conversions. An unchecked context permits truncation or wraparound in those cases.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>int n = int.MaxValue;
+checked { n += 1; } // throws</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n017">← Operators</a><a href="#topic-n025">checked</a><a href="#topic-n026">unchecked</a></nav>
+</section><section class="static-detail" id="topic-n025" style="--branch:#19aa87">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Operators</div>
+<h2>checked</h2><p class="static-description">Use checked to detect overflow in applicable integral operations and conversions.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>int max = int.MaxValue;
+int result = checked(max + 1); // throws</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n024">← Overflow</a><a href="#topic-n026">unchecked</a></nav>
+</section><section class="static-detail" id="topic-n026" style="--branch:#19aa87">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Operators</div>
+<h2>unchecked</h2><p class="static-description">Use unchecked to suppress overflow checks for applicable integral operations.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>int n = unchecked(int.MaxValue + 1); // int.MinValue</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n024">← Overflow</a><a href="#topic-n025">checked</a></nav>
+</section><section class="static-detail" id="topic-n027" style="--branch:#19aa87">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Operators</div>
+<h2>Overloading</h2><p class="static-description">Operator overloading lets a type define the behavior of selected operators.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>public static Vector operator +(Vector a, Vector b) =&gt; new(a.X + b.X, a.Y + b.Y);</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n017">← Operators</a><a href="#topic-n018">Arithmetic</a><a href="#topic-n020">Assignment</a><a href="#topic-n022">Bitwise</a><a href="#topic-n024">Overflow</a><a href="#topic-n028">Relational</a></nav>
+</section><section class="static-detail" id="topic-n028" style="--branch:#19aa87">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Operators</div>
+<h2>Relational</h2><p class="static-description">Relational and equality operators compare operands and return a Boolean result.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>bool isAdult = age &gt;= 18;</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n017">← Operators</a><a href="#topic-n029">==, !=, &gt;, &lt;</a></nav>
+</section><section class="static-detail" id="topic-n029" style="--branch:#19aa87">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Operators</div>
+<h2>==, !=, &gt;, &lt;</h2><p class="static-description">Equality and relational operators test equality, inequality, and ordering.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>bool same = 5 == 5; // true</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n028">← Relational</a></nav>
+</section><section class="static-detail" id="topic-n030" style="--branch:#e0a72e">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">LINQ</div>
+<h2>LINQ</h2><p class="static-description">Language Integrated Query (LINQ) provides operators to filter, transform, group, and combine data from sequences and other supported sources.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>var even = numbers.Where(n =&gt; n % 2 == 0).ToList();</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n001">← C#</a><a href="#topic-n031">Projection</a><a href="#topic-n034">Aggregation</a><a href="#topic-n040">Set</a><a href="#topic-n044">Quantification</a><a href="#topic-n049">Element</a><a href="#topic-n054">Grouping</a><a href="#topic-n056">Filtering</a><a href="#topic-n062">Merging</a><a href="#topic-n065">Conversion</a></nav>
+</section><section class="static-detail" id="topic-n031" style="--branch:#e0a72e">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">LINQ</div>
+<h2>Projection</h2><p class="static-description">Projection transforms each source element into a new result.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>var names = people.Select(p =&gt; p.Name);</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n030">← LINQ</a><a href="#topic-n032">Select</a><a href="#topic-n033">SelectMany</a></nav>
+</section><section class="static-detail" id="topic-n032" style="--branch:#e0a72e">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">LINQ</div>
+<h2>Select</h2><p class="static-description">Select transforms each element using a projection function.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>var lengths = words.Select(w =&gt; w.Length);</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n031">← Projection</a><a href="#topic-n033">SelectMany</a></nav>
+</section><section class="static-detail" id="topic-n033" style="--branch:#e0a72e">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">LINQ</div>
+<h2>SelectMany</h2><p class="static-description">SelectMany flattens nested sequences into one sequence.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>var all = groups.SelectMany(group =&gt; group);</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n031">← Projection</a><a href="#topic-n032">Select</a></nav>
+</section><section class="static-detail" id="topic-n034" style="--branch:#e0a72e">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">LINQ</div>
+<h2>Aggregation</h2><p class="static-description">Aggregation combines multiple elements into one value or summary.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>int total = prices.Sum();</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n030">← LINQ</a><a href="#topic-n035">Max(By)</a><a href="#topic-n036">Min(By)</a><a href="#topic-n037">Aggregate</a><a href="#topic-n038">Sum</a><a href="#topic-n039">Count</a></nav>
+</section><section class="static-detail" id="topic-n035" style="--branch:#e0a72e">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">LINQ</div>
+<h2>Max(By)</h2><p class="static-description">Max returns the largest value. MaxBy returns the element with the largest selected key.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>var newest = orders.MaxBy(o =&gt; o.Date);</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n034">← Aggregation</a><a href="#topic-n036">Min(By)</a><a href="#topic-n037">Aggregate</a><a href="#topic-n038">Sum</a><a href="#topic-n039">Count</a></nav>
+</section><section class="static-detail" id="topic-n036" style="--branch:#e0a72e">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">LINQ</div>
+<h2>Min(By)</h2><p class="static-description">Min returns the smallest value. MinBy returns the element with the smallest selected key.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>var cheapest = products.MinBy(p =&gt; p.Price);</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n034">← Aggregation</a><a href="#topic-n035">Max(By)</a><a href="#topic-n037">Aggregate</a><a href="#topic-n038">Sum</a><a href="#topic-n039">Count</a></nav>
+</section><section class="static-detail" id="topic-n037" style="--branch:#e0a72e">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">LINQ</div>
+<h2>Aggregate</h2><p class="static-description">Aggregate repeatedly combines elements with an accumulator function.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>int product = numbers.Aggregate(1, (a, n) =&gt; a * n);</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n034">← Aggregation</a><a href="#topic-n035">Max(By)</a><a href="#topic-n036">Min(By)</a><a href="#topic-n038">Sum</a><a href="#topic-n039">Count</a></nav>
+</section><section class="static-detail" id="topic-n038" style="--branch:#e0a72e">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">LINQ</div>
+<h2>Sum</h2><p class="static-description">Sum adds numeric values or selected numeric properties.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>decimal total = orders.Sum(o =&gt; o.Amount);</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n034">← Aggregation</a><a href="#topic-n035">Max(By)</a><a href="#topic-n036">Min(By)</a><a href="#topic-n037">Aggregate</a><a href="#topic-n039">Count</a></nav>
+</section><section class="static-detail" id="topic-n039" style="--branch:#e0a72e">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">LINQ</div>
+<h2>Count</h2><p class="static-description">Count returns the number of elements, optionally matching a predicate.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>int adults = people.Count(p =&gt; p.Age &gt;= 18);</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n034">← Aggregation</a><a href="#topic-n035">Max(By)</a><a href="#topic-n036">Min(By)</a><a href="#topic-n037">Aggregate</a><a href="#topic-n038">Sum</a></nav>
+</section><section class="static-detail" id="topic-n040" style="--branch:#e0a72e">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">LINQ</div>
+<h2>Set</h2><p class="static-description">LINQ set operators combine or compare sequences using set-style semantics.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>var unique = first.Union(second);</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n030">← LINQ</a><a href="#topic-n041">Intersect</a><a href="#topic-n042">Union</a><a href="#topic-n043">Except</a></nav>
+</section><section class="static-detail" id="topic-n041" style="--branch:#e0a72e">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">LINQ</div>
+<h2>Intersect</h2><p class="static-description">Intersect returns distinct elements present in both sequences.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>var common = left.Intersect(right);</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n040">← Set</a><a href="#topic-n042">Union</a><a href="#topic-n043">Except</a></nav>
+</section><section class="static-detail" id="topic-n042" style="--branch:#e0a72e">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">LINQ</div>
+<h2>Union</h2><p class="static-description">Union returns the distinct elements from both sequences.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>var all = left.Union(right);</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n040">← Set</a><a href="#topic-n041">Intersect</a><a href="#topic-n043">Except</a></nav>
+</section><section class="static-detail" id="topic-n043" style="--branch:#e0a72e">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">LINQ</div>
+<h2>Except</h2><p class="static-description">Except returns distinct elements in the first sequence but not the second.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>var missing = expected.Except(actual);</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n040">← Set</a><a href="#topic-n041">Intersect</a><a href="#topic-n042">Union</a></nav>
+</section><section class="static-detail" id="topic-n044" style="--branch:#e0a72e">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">LINQ</div>
+<h2>Quantification</h2><p class="static-description">Quantification operators check whether elements satisfy a condition.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>bool anyInvalid = items.Any(x =&gt; !x.IsValid);</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n030">← LINQ</a><a href="#topic-n045">All</a><a href="#topic-n046">Any</a><a href="#topic-n047">Contains</a><a href="#topic-n048">SequenceEquals</a></nav>
+</section><section class="static-detail" id="topic-n045" style="--branch:#e0a72e">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">LINQ</div>
+<h2>All</h2><p class="static-description">All returns true if all elements satisfy a predicate. It also returns true for an empty sequence.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>bool allPositive = numbers.All(n =&gt; n &gt; 0);</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n044">← Quantification</a><a href="#topic-n046">Any</a><a href="#topic-n047">Contains</a><a href="#topic-n048">SequenceEquals</a></nav>
+</section><section class="static-detail" id="topic-n046" style="--branch:#e0a72e">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">LINQ</div>
+<h2>Any</h2><p class="static-description">Any tests whether the sequence contains elements or a matching element.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>bool hasErrors = errors.Any();</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n044">← Quantification</a><a href="#topic-n045">All</a><a href="#topic-n047">Contains</a><a href="#topic-n048">SequenceEquals</a></nav>
+</section><section class="static-detail" id="topic-n047" style="--branch:#e0a72e">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">LINQ</div>
+<h2>Contains</h2><p class="static-description">Contains tests whether a sequence has a specified value.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>bool found = names.Contains(&quot;Ada&quot;);</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n044">← Quantification</a><a href="#topic-n045">All</a><a href="#topic-n046">Any</a><a href="#topic-n048">SequenceEquals</a></nav>
+</section><section class="static-detail" id="topic-n048" style="--branch:#e0a72e">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">LINQ</div>
+<h2>SequenceEquals</h2><p class="static-description">The C# LINQ method is named SequenceEqual (singular). It compares two sequences element by element in order.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>bool equal = first.SequenceEqual(second);</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n044">← Quantification</a><a href="#topic-n045">All</a><a href="#topic-n046">Any</a><a href="#topic-n047">Contains</a></nav>
+</section><section class="static-detail" id="topic-n049" style="--branch:#e0a72e">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">LINQ</div>
+<h2>Element</h2><p class="static-description">Element operators return one element from a sequence. Some variants return a default value when no match exists.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>var first = values.FirstOrDefault();</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n030">← LINQ</a><a href="#topic-n050">First(OrDefault)</a><a href="#topic-n051">Single(OrDefault)</a><a href="#topic-n052">Last(OrDefault)</a><a href="#topic-n053">ElementAt</a></nav>
+</section><section class="static-detail" id="topic-n050" style="--branch:#e0a72e">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">LINQ</div>
+<h2>First(OrDefault)</h2><p class="static-description">First returns the first matching element or throws if none exists. FirstOrDefault returns a default value instead.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>var first = products.FirstOrDefault(p =&gt; p.InStock);</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n049">← Element</a><a href="#topic-n051">Single(OrDefault)</a><a href="#topic-n052">Last(OrDefault)</a><a href="#topic-n053">ElementAt</a></nav>
+</section><section class="static-detail" id="topic-n051" style="--branch:#e0a72e">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">LINQ</div>
+<h2>Single(OrDefault)</h2><p class="static-description">Single expects exactly one match. SingleOrDefault also allows zero matches but throws on multiple matches.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>var user = users.SingleOrDefault(u =&gt; u.Id == id);</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n049">← Element</a><a href="#topic-n050">First(OrDefault)</a><a href="#topic-n052">Last(OrDefault)</a><a href="#topic-n053">ElementAt</a></nav>
+</section><section class="static-detail" id="topic-n052" style="--branch:#e0a72e">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">LINQ</div>
+<h2>Last(OrDefault)</h2><p class="static-description">Last returns the final matching element. LastOrDefault returns the default value if there is no match.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>var latest = records.LastOrDefault();</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n049">← Element</a><a href="#topic-n050">First(OrDefault)</a><a href="#topic-n051">Single(OrDefault)</a><a href="#topic-n053">ElementAt</a></nav>
+</section><section class="static-detail" id="topic-n053" style="--branch:#e0a72e">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">LINQ</div>
+<h2>ElementAt</h2><p class="static-description">ElementAt returns the element at a zero-based index. It throws if the index is outside the sequence.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>var third = values.ElementAt(2);</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n049">← Element</a><a href="#topic-n050">First(OrDefault)</a><a href="#topic-n051">Single(OrDefault)</a><a href="#topic-n052">Last(OrDefault)</a></nav>
+</section><section class="static-detail" id="topic-n054" style="--branch:#e0a72e">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">LINQ</div>
+<h2>Grouping</h2><p class="static-description">Grouping collects elements into groups based on a key.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>var byCity = people.GroupBy(p =&gt; p.City);</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n030">← LINQ</a><a href="#topic-n055">GroupBy</a></nav>
+</section><section class="static-detail" id="topic-n055" style="--branch:#e0a72e">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">LINQ</div>
+<h2>GroupBy</h2><p class="static-description">GroupBy returns an IGrouping&lt;TKey,TElement&gt; sequence for each distinct key.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>var grouped = orders.GroupBy(o =&gt; o.CustomerId);</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n054">← Grouping</a></nav>
+</section><section class="static-detail" id="topic-n056" style="--branch:#e0a72e">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">LINQ</div>
+<h2>Filtering</h2><p class="static-description">Filtering selects elements according to predicates, types, or position.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>var adults = people.Where(p =&gt; p.Age &gt;= 18);</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n030">← LINQ</a><a href="#topic-n057">Where</a><a href="#topic-n058">Take(While)</a><a href="#topic-n059">Skip(While)</a><a href="#topic-n060">OfType</a><a href="#topic-n061">Distinct(By)</a></nav>
+</section><section class="static-detail" id="topic-n057" style="--branch:#e0a72e">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">LINQ</div>
+<h2>Where</h2><p class="static-description">Where includes only elements that match a Boolean predicate.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>var evens = numbers.Where(n =&gt; n % 2 == 0);</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n056">← Filtering</a><a href="#topic-n058">Take(While)</a><a href="#topic-n059">Skip(While)</a><a href="#topic-n060">OfType</a><a href="#topic-n061">Distinct(By)</a></nav>
+</section><section class="static-detail" id="topic-n058" style="--branch:#e0a72e">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">LINQ</div>
+<h2>Take(While)</h2><p class="static-description">Take selects the first N elements. TakeWhile selects the initial run matching a condition.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>var firstThree = numbers.Take(3);</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n056">← Filtering</a><a href="#topic-n057">Where</a><a href="#topic-n059">Skip(While)</a><a href="#topic-n060">OfType</a><a href="#topic-n061">Distinct(By)</a></nav>
+</section><section class="static-detail" id="topic-n059" style="--branch:#e0a72e">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">LINQ</div>
+<h2>Skip(While)</h2><p class="static-description">Skip excludes the first N elements. SkipWhile excludes the initial run matching a condition.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>var afterThree = numbers.Skip(3);</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n056">← Filtering</a><a href="#topic-n057">Where</a><a href="#topic-n058">Take(While)</a><a href="#topic-n060">OfType</a><a href="#topic-n061">Distinct(By)</a></nav>
+</section><section class="static-detail" id="topic-n060" style="--branch:#e0a72e">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">LINQ</div>
+<h2>OfType</h2><p class="static-description">OfType&lt;T&gt; returns only elements that can be converted to the specified type.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>var numbers = mixed.OfType&lt;int&gt;();</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n056">← Filtering</a><a href="#topic-n057">Where</a><a href="#topic-n058">Take(While)</a><a href="#topic-n059">Skip(While)</a><a href="#topic-n061">Distinct(By)</a></nav>
+</section><section class="static-detail" id="topic-n061" style="--branch:#e0a72e">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">LINQ</div>
+<h2>Distinct(By)</h2><p class="static-description">Distinct removes duplicate values. DistinctBy removes duplicates using a selected key.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>var uniqueUsers = users.DistinctBy(u =&gt; u.Email);</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n056">← Filtering</a><a href="#topic-n057">Where</a><a href="#topic-n058">Take(While)</a><a href="#topic-n059">Skip(While)</a><a href="#topic-n060">OfType</a></nav>
+</section><section class="static-detail" id="topic-n062" style="--branch:#e0a72e">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">LINQ</div>
+<h2>Merging</h2><p class="static-description">Merging operators associate or pair elements from multiple sequences.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>var pairs = left.Zip(right);</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n030">← LINQ</a><a href="#topic-n063">Join</a><a href="#topic-n064">Zip</a></nav>
+</section><section class="static-detail" id="topic-n063" style="--branch:#e0a72e">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">LINQ</div>
+<h2>Join</h2><p class="static-description">Join matches elements from two sequences using keys.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>var result = orders.Join(users, o =&gt; o.UserId, u =&gt; u.Id, (o, u) =&gt; new { o, u });</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n062">← Merging</a><a href="#topic-n064">Zip</a></nav>
+</section><section class="static-detail" id="topic-n064" style="--branch:#e0a72e">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">LINQ</div>
+<h2>Zip</h2><p class="static-description">Zip combines corresponding elements from two sequences.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>var pairs = names.Zip(ages, (name, age) =&gt; new { name, age });</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n062">← Merging</a><a href="#topic-n063">Join</a></nav>
+</section><section class="static-detail" id="topic-n065" style="--branch:#e0a72e">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">LINQ</div>
+<h2>Conversion</h2><p class="static-description">Conversion operators change the representation of a query result.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>List&lt;int&gt; result = query.ToList();</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n030">← LINQ</a><a href="#topic-n066">Cast</a><a href="#topic-n067">ToDictionary</a><a href="#topic-n068">ToLookup</a><a href="#topic-n069">ToArray</a><a href="#topic-n070">ToList</a></nav>
+</section><section class="static-detail" id="topic-n066" style="--branch:#e0a72e">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">LINQ</div>
+<h2>Cast</h2><p class="static-description">Cast&lt;T&gt; converts each element to a specified type and throws if an element cannot be cast.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>var ints = objects.Cast&lt;int&gt;();</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n065">← Conversion</a><a href="#topic-n067">ToDictionary</a><a href="#topic-n068">ToLookup</a><a href="#topic-n069">ToArray</a><a href="#topic-n070">ToList</a></nav>
+</section><section class="static-detail" id="topic-n067" style="--branch:#e0a72e">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">LINQ</div>
+<h2>ToDictionary</h2><p class="static-description">ToDictionary creates a dictionary from elements using selected keys and values. Duplicate keys throw.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>var byId = users.ToDictionary(u =&gt; u.Id);</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n065">← Conversion</a><a href="#topic-n066">Cast</a><a href="#topic-n068">ToLookup</a><a href="#topic-n069">ToArray</a><a href="#topic-n070">ToList</a></nav>
+</section><section class="static-detail" id="topic-n068" style="--branch:#e0a72e">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">LINQ</div>
+<h2>ToLookup</h2><p class="static-description">ToLookup creates a read-only key-to-many-values lookup.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>var byCity = people.ToLookup(p =&gt; p.City);</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n065">← Conversion</a><a href="#topic-n066">Cast</a><a href="#topic-n067">ToDictionary</a><a href="#topic-n069">ToArray</a><a href="#topic-n070">ToList</a></nav>
+</section><section class="static-detail" id="topic-n069" style="--branch:#e0a72e">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">LINQ</div>
+<h2>ToArray</h2><p class="static-description">ToArray materializes the sequence as an array.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>int[] values = query.ToArray();</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n065">← Conversion</a><a href="#topic-n066">Cast</a><a href="#topic-n067">ToDictionary</a><a href="#topic-n068">ToLookup</a><a href="#topic-n070">ToList</a></nav>
+</section><section class="static-detail" id="topic-n070" style="--branch:#e0a72e">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">LINQ</div>
+<h2>ToList</h2><p class="static-description">ToList materializes the sequence as a List&lt;T&gt;.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>List&lt;int&gt; values = query.ToList();</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n065">← Conversion</a><a href="#topic-n066">Cast</a><a href="#topic-n067">ToDictionary</a><a href="#topic-n068">ToLookup</a><a href="#topic-n069">ToArray</a></nav>
+</section><section class="static-detail" id="topic-n071" style="--branch:#ef9655">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Statements</div>
+<h2>Statements</h2><p class="static-description">Statements control program execution, declare local variables, handle errors, and perform actions.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>if (isReady) { Start(); }</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n001">← C#</a><a href="#topic-n072">Yield</a><a href="#topic-n073">Unsafe</a><a href="#topic-n074">Using</a><a href="#topic-n075">Lock</a><a href="#topic-n076">Control flow</a><a href="#topic-n079">Loops</a><a href="#topic-n084">Error handling</a></nav>
+</section><section class="static-detail" id="topic-n072" style="--branch:#ef9655">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Statements</div>
+<h2>Yield</h2><p class="static-description">yield return produces sequence elements one at a time from an iterator. yield break ends iteration.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>IEnumerable&lt;int&gt; Get() { yield return 1; yield return 2; }</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n071">← Statements</a><a href="#topic-n073">Unsafe</a><a href="#topic-n074">Using</a><a href="#topic-n075">Lock</a><a href="#topic-n076">Control flow</a><a href="#topic-n079">Loops</a><a href="#topic-n084">Error handling</a></nav>
+</section><section class="static-detail" id="topic-n073" style="--branch:#ef9655">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Statements</div>
+<h2>Unsafe</h2><p class="static-description">unsafe allows pointer operations in code compiled with unsafe support.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>unsafe { int value = 7; int* p = &amp;value; }</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n071">← Statements</a><a href="#topic-n072">Yield</a><a href="#topic-n074">Using</a><a href="#topic-n075">Lock</a><a href="#topic-n076">Control flow</a><a href="#topic-n079">Loops</a><a href="#topic-n084">Error handling</a></nav>
+</section><section class="static-detail" id="topic-n074" style="--branch:#ef9655">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Statements</div>
+<h2>Using</h2><p class="static-description">A using statement disposes an IDisposable object when control exits its scope.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>using var stream = File.OpenRead(path);</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n071">← Statements</a><a href="#topic-n072">Yield</a><a href="#topic-n073">Unsafe</a><a href="#topic-n075">Lock</a><a href="#topic-n076">Control flow</a><a href="#topic-n079">Loops</a><a href="#topic-n084">Error handling</a></nav>
+</section><section class="static-detail" id="topic-n075" style="--branch:#ef9655">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Statements</div>
+<h2>Lock</h2><p class="static-description">lock limits execution of a critical section to one thread at a time for a given lock object.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>lock (_gate) { _count++; }</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n071">← Statements</a><a href="#topic-n072">Yield</a><a href="#topic-n073">Unsafe</a><a href="#topic-n074">Using</a><a href="#topic-n076">Control flow</a><a href="#topic-n079">Loops</a><a href="#topic-n084">Error handling</a></nav>
+</section><section class="static-detail" id="topic-n076" style="--branch:#ef9655">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Statements</div>
+<h2>Control flow</h2><p class="static-description">Conditional statements choose which code executes based on conditions or pattern matches.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>if (score &gt;= 50) { Pass(); } else { Retry(); }</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n071">← Statements</a><a href="#topic-n077">If-else</a><a href="#topic-n078">Switch</a></nav>
+</section><section class="static-detail" id="topic-n077" style="--branch:#ef9655">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Statements</div>
+<h2>If-else</h2><p class="static-description">if runs a statement when a condition is true. else runs an alternative when false.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>if (age &gt;= 18) Console.WriteLine(&quot;Adult&quot;);
+else Console.WriteLine(&quot;Minor&quot;);</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n076">← Control flow</a><a href="#topic-n078">Switch</a></nav>
+</section><section class="static-detail" id="topic-n078" style="--branch:#ef9655">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Statements</div>
+<h2>Switch</h2><p class="static-description">switch selects a branch using values, patterns, and optional conditions.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>switch (status) { case &quot;OK&quot;: Handle(); break; default: Log(); break; }</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n076">← Control flow</a><a href="#topic-n077">If-else</a></nav>
+</section><section class="static-detail" id="topic-n079" style="--branch:#ef9655">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Statements</div>
+<h2>Loops</h2><p class="static-description">Loops repeat code. Use for, foreach, while, or do-while depending on how repetition ends.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>foreach (var item in items) Console.WriteLine(item);</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n071">← Statements</a><a href="#topic-n080">For</a><a href="#topic-n081">Foreach</a><a href="#topic-n082">Do..while</a><a href="#topic-n083">While</a></nav>
+</section><section class="static-detail" id="topic-n080" style="--branch:#ef9655">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Statements</div>
+<h2>For</h2><p class="static-description">for repeats code with an initializer, a condition, and an iteration step.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>for (int i = 0; i &lt; 3; i++) Console.WriteLine(i);</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n079">← Loops</a><a href="#topic-n081">Foreach</a><a href="#topic-n082">Do..while</a><a href="#topic-n083">While</a></nav>
+</section><section class="static-detail" id="topic-n081" style="--branch:#ef9655">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Statements</div>
+<h2>Foreach</h2><p class="static-description">foreach iterates over each element of a collection or sequence.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>foreach (string name in names) Console.WriteLine(name);</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n079">← Loops</a><a href="#topic-n080">For</a><a href="#topic-n082">Do..while</a><a href="#topic-n083">While</a></nav>
+</section><section class="static-detail" id="topic-n082" style="--branch:#ef9655">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Statements</div>
+<h2>Do..while</h2><p class="static-description">do-while executes the loop body at least once and tests the condition afterward.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>do { ReadInput(); } while (needsInput);</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n079">← Loops</a><a href="#topic-n080">For</a><a href="#topic-n081">Foreach</a><a href="#topic-n083">While</a></nav>
+</section><section class="static-detail" id="topic-n083" style="--branch:#ef9655">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Statements</div>
+<h2>While</h2><p class="static-description">while repeats the loop body while its condition remains true.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>while (queue.Count &gt; 0) Process(queue.Dequeue());</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n079">← Loops</a><a href="#topic-n080">For</a><a href="#topic-n081">Foreach</a><a href="#topic-n082">Do..while</a></nav>
+</section><section class="static-detail" id="topic-n084" style="--branch:#ef9655">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Statements</div>
+<h2>Error handling</h2><p class="static-description">Exception-handling statements use try, catch, and finally to handle failures and cleanup.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>try { Save(); } catch (IOException ex) { Log(ex); }</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n071">← Statements</a><a href="#topic-n085">Try-catch-finally</a></nav>
+</section><section class="static-detail" id="topic-n085" style="--branch:#ef9655">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Statements</div>
+<h2>Try-catch-finally</h2><p class="static-description">try contains code that can throw. catch handles matching exceptions. finally executes during normal and exceptional exits.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>try { Read(); } catch (IOException ex) { Log(ex); } finally { Cleanup(); }</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n084">← Error handling</a></nav>
+</section><section class="static-detail" id="topic-n086" style="--branch:#ed656d">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Type System</div>
+<h2>Type System</h2><p class="static-description">The C# type system defines what values can be stored, how members are accessed, and how types relate.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>int age = 30;
+string name = &quot;Ada&quot;;</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n001">← C#</a><a href="#topic-n087">Predefined Types</a><a href="#topic-n113">User-defined Types</a></nav>
+</section><section class="static-detail" id="topic-n087" style="--branch:#ed656d">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Type System</div>
+<h2>Predefined Types</h2><p class="static-description">Predefined types have language keywords such as int, bool, object, and string.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>int count = 5;
+bool enabled = true;</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n086">← Type System</a><a href="#topic-n088">Value</a><a href="#topic-n110">Reference</a></nav>
+</section><section class="static-detail" id="topic-n088" style="--branch:#ed656d">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Type System</div>
+<h2>Value</h2><p class="static-description">Value types store values directly. A value assignment normally copies the value.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>int a = 1; int b = a; b = 2; // a is still 1</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n087">← Predefined Types</a><a href="#topic-n089">Numeric</a><a href="#topic-n107">Non-numeric</a></nav>
+</section><section class="static-detail" id="topic-n089" style="--branch:#ed656d">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Type System</div>
+<h2>Numeric</h2><p class="static-description">Numeric types store integer or floating-point values.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>int quantity = 3;
+double weight = 1.5;</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n088">← Value</a><a href="#topic-n090">Integer</a><a href="#topic-n103">Floating Point</a></nav>
+</section><section class="static-detail" id="topic-n090" style="--branch:#ed656d">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Type System</div>
+<h2>Integer</h2><p class="static-description">Integer types store whole numbers. Signed and unsigned types have different ranges.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>int count = -5;
+uint positive = 5u;</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n089">← Numeric</a><a href="#topic-n091">8-bit</a><a href="#topic-n094">16-bit</a><a href="#topic-n097">32-bit</a><a href="#topic-n100">64-bit</a></nav>
+</section><section class="static-detail" id="topic-n091" style="--branch:#ed656d">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Type System</div>
+<h2>8-bit</h2><p class="static-description">The 8-bit integer types are sbyte (signed) and byte (unsigned).</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>sbyte delta = -10;
+byte level = 255;</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n090">← Integer</a><a href="#topic-n092">sbyte</a><a href="#topic-n093">byte</a></nav>
+</section><section class="static-detail" id="topic-n092" style="--branch:#ed656d">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Type System</div>
+<h2>sbyte</h2><p class="static-description">sbyte is a signed 8-bit integer with a range from -128 to 127.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>sbyte temperatureChange = -12;</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n091">← 8-bit</a><a href="#topic-n093">byte</a></nav>
+</section><section class="static-detail" id="topic-n093" style="--branch:#ed656d">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Type System</div>
+<h2>byte</h2><p class="static-description">byte is an unsigned 8-bit integer with a range from 0 to 255.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>byte alpha = 255;</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n091">← 8-bit</a><a href="#topic-n092">sbyte</a></nav>
+</section><section class="static-detail" id="topic-n094" style="--branch:#ed656d">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Type System</div>
+<h2>16-bit</h2><p class="static-description">The 16-bit integer types are short (signed) and ushort (unsigned).</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>short a = -300; ushort b = 60000;</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n090">← Integer</a><a href="#topic-n095">short</a><a href="#topic-n096">ushort</a></nav>
+</section><section class="static-detail" id="topic-n095" style="--branch:#ed656d">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Type System</div>
+<h2>short</h2><p class="static-description">short is a signed 16-bit integer.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>short change = -32000;</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n094">← 16-bit</a><a href="#topic-n096">ushort</a></nav>
+</section><section class="static-detail" id="topic-n096" style="--branch:#ed656d">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Type System</div>
+<h2>ushort</h2><p class="static-description">ushort is an unsigned 16-bit integer.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>ushort port = 50000;</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n094">← 16-bit</a><a href="#topic-n095">short</a></nav>
+</section><section class="static-detail" id="topic-n097" style="--branch:#ed656d">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Type System</div>
+<h2>32-bit</h2><p class="static-description">The 32-bit integer types are int (signed) and uint (unsigned).</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>int balance = -100; uint size = 100u;</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n090">← Integer</a><a href="#topic-n098">int</a><a href="#topic-n099">uint</a></nav>
+</section><section class="static-detail" id="topic-n098" style="--branch:#ed656d">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Type System</div>
+<h2>int</h2><p class="static-description">int is a signed 32-bit integer used for many whole-number calculations.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>int total = 42;</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n097">← 32-bit</a><a href="#topic-n099">uint</a></nav>
+</section><section class="static-detail" id="topic-n099" style="--branch:#ed656d">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Type System</div>
+<h2>uint</h2><p class="static-description">uint is an unsigned 32-bit integer.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>uint capacity = 4000000000u;</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n097">← 32-bit</a><a href="#topic-n098">int</a></nav>
+</section><section class="static-detail" id="topic-n100" style="--branch:#ed656d">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Type System</div>
+<h2>64-bit</h2><p class="static-description">The 64-bit integer types are long (signed) and ulong (unsigned).</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>long distance = 9000000000L;</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n090">← Integer</a><a href="#topic-n101">long</a><a href="#topic-n102">ulong</a></nav>
+</section><section class="static-detail" id="topic-n101" style="--branch:#ed656d">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Type System</div>
+<h2>long</h2><p class="static-description">long is a signed 64-bit integer.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>long ticks = 9000000000L;</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n100">← 64-bit</a><a href="#topic-n102">ulong</a></nav>
+</section><section class="static-detail" id="topic-n102" style="--branch:#ed656d">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Type System</div>
+<h2>ulong</h2><p class="static-description">ulong is an unsigned 64-bit integer.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>ulong bytes = 18000000000UL;</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n100">← 64-bit</a><a href="#topic-n101">long</a></nav>
+</section><section class="static-detail" id="topic-n103" style="--branch:#ed656d">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Type System</div>
+<h2>Floating Point</h2><p class="static-description">This branch groups decimal, float, and double. decimal is base-10, while float and double use binary floating-point.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>decimal price = 19.99m;
+double ratio = 0.5;</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n089">← Numeric</a><a href="#topic-n104">decimal</a><a href="#topic-n105">float</a><a href="#topic-n106">double</a></nav>
+</section><section class="static-detail" id="topic-n104" style="--branch:#ed656d">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Type System</div>
+<h2>decimal</h2><p class="static-description">decimal is a 128-bit decimal type suited to many financial calculations.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>decimal price = 19.95m;</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n103">← Floating Point</a><a href="#topic-n105">float</a><a href="#topic-n106">double</a></nav>
+</section><section class="static-detail" id="topic-n105" style="--branch:#ed656d">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Type System</div>
+<h2>float</h2><p class="static-description">float is a 32-bit binary floating-point type.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>float rate = 0.75f;</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n103">← Floating Point</a><a href="#topic-n104">decimal</a><a href="#topic-n106">double</a></nav>
+</section><section class="static-detail" id="topic-n106" style="--branch:#ed656d">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Type System</div>
+<h2>double</h2><p class="static-description">double is a 64-bit binary floating-point type.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>double pi = 3.141592653589793;</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n103">← Floating Point</a><a href="#topic-n104">decimal</a><a href="#topic-n105">float</a></nav>
+</section><section class="static-detail" id="topic-n107" style="--branch:#ed656d">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Type System</div>
+<h2>Non-numeric</h2><p class="static-description">Predefined non-numeric value types include bool and char.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>bool isActive = true;
+char initial = &#x27;A&#x27;;</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n088">← Value</a><a href="#topic-n108">bool</a><a href="#topic-n109">char</a></nav>
+</section><section class="static-detail" id="topic-n108" style="--branch:#ed656d">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Type System</div>
+<h2>bool</h2><p class="static-description">bool represents the Boolean values true and false.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>bool enabled = false;</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n107">← Non-numeric</a><a href="#topic-n109">char</a></nav>
+</section><section class="static-detail" id="topic-n109" style="--branch:#ed656d">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Type System</div>
+<h2>char</h2><p class="static-description">char stores one UTF-16 code unit.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>char letter = &#x27;A&#x27;;</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n107">← Non-numeric</a><a href="#topic-n108">bool</a></nav>
+</section><section class="static-detail" id="topic-n110" style="--branch:#ed656d">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Type System</div>
+<h2>Reference</h2><p class="static-description">Reference types hold references to objects. Assignment copies a reference rather than duplicating the object.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>var first = new Person();
+var second = first;</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n087">← Predefined Types</a><a href="#topic-n111">Object</a><a href="#topic-n112">String</a></nav>
+</section><section class="static-detail" id="topic-n111" style="--branch:#ed656d">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Type System</div>
+<h2>Object</h2><p class="static-description">object is the root type of the .NET type hierarchy. It can refer to values of any type.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>object value = 42;</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n110">← Reference</a><a href="#topic-n112">String</a></nav>
+</section><section class="static-detail" id="topic-n112" style="--branch:#ed656d">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Type System</div>
+<h2>String</h2><p class="static-description">string represents an immutable sequence of UTF-16 code units.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>string message = &quot;Hello&quot;;</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n110">← Reference</a><a href="#topic-n111">Object</a></nav>
+</section><section class="static-detail" id="topic-n113" style="--branch:#ed656d">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Type System</div>
+<h2>User-defined Types</h2><p class="static-description">You can declare types such as classes, structs, enums, interfaces, and delegates.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>public record Person(string Name);</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n086">← Type System</a><a href="#topic-n114">Value types</a><a href="#topic-n117">Reference types</a></nav>
+</section><section class="static-detail" id="topic-n114" style="--branch:#ed656d">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Type System</div>
+<h2>Value types</h2><p class="static-description">User-defined value types include struct and enum.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>public struct Point { public int X, Y; }</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n113">← User-defined Types</a><a href="#topic-n115">struct</a><a href="#topic-n116">enum</a></nav>
+</section><section class="static-detail" id="topic-n115" style="--branch:#ed656d">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Type System</div>
+<h2>struct</h2><p class="static-description">A struct defines a value type. Struct assignment normally copies the value.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>public readonly struct Point { public int X { get; init; } }</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n114">← Value types</a><a href="#topic-n116">enum</a></nav>
+</section><section class="static-detail" id="topic-n116" style="--branch:#ed656d">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Type System</div>
+<h2>enum</h2><p class="static-description">An enum defines a set of named integral constants.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>enum Status { Pending, Approved, Rejected }</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n114">← Value types</a><a href="#topic-n115">struct</a></nav>
+</section><section class="static-detail" id="topic-n117" style="--branch:#ed656d">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Type System</div>
+<h2>Reference types</h2><p class="static-description">User-defined reference types include class, interface, delegate, and array types.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>class Customer { public string Name { get; set; } = &quot;&quot;; }</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n113">← User-defined Types</a><a href="#topic-n118">Class</a><a href="#topic-n145">Interface</a><a href="#topic-n146">Delegate</a><a href="#topic-n147">Array</a></nav>
+</section><section class="static-detail" id="topic-n118" style="--branch:#ed656d">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Type System</div>
+<h2>Class</h2><p class="static-description">A class defines a reference type with fields, properties, methods, and constructors.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>class User { public string Name { get; set; } = &quot;&quot;; }</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n117">← Reference types</a><a href="#topic-n119">Class members</a><a href="#topic-n135">Fields</a><a href="#topic-n139">Access modifiers</a></nav>
+</section><section class="static-detail" id="topic-n119" style="--branch:#ed656d">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Type System</div>
+<h2>Class members</h2><p class="static-description">Class members define data and behavior, such as properties, fields, methods, and constructors.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>class Counter { public int Value { get; private set; } }</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n118">← Class</a><a href="#topic-n120">Properties</a><a href="#topic-n121">Methods</a><a href="#topic-n132">Constructors</a></nav>
+</section><section class="static-detail" id="topic-n120" style="--branch:#ed656d">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Type System</div>
+<h2>Properties</h2><p class="static-description">Properties provide controlled access to values through accessors such as get, set, and init.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>public string Name { get; set; } = &quot;&quot;;</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n119">← Class members</a><a href="#topic-n121">Methods</a><a href="#topic-n132">Constructors</a></nav>
+</section><section class="static-detail" id="topic-n121" style="--branch:#ed656d">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Type System</div>
+<h2>Methods</h2><p class="static-description">A method defines an operation. Methods can accept parameters and return values.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>int Add(int a, int b) =&gt; a + b;</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n119">← Class members</a><a href="#topic-n122">Parameters</a><a href="#topic-n128">Instance</a><a href="#topic-n129">Static</a><a href="#topic-n130">Virtual/Abstract</a><a href="#topic-n131">Override</a></nav>
+</section><section class="static-detail" id="topic-n122" style="--branch:#ed656d">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Type System</div>
+<h2>Parameters</h2><p class="static-description">Parameters are named inputs declared in a method signature. C# supports value, ref, out, and in modes.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>void Greet(string name) =&gt; Console.WriteLine(name);</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n121">← Methods</a><a href="#topic-n123">Param</a><a href="#topic-n124">Out</a><a href="#topic-n125">Value</a><a href="#topic-n126">Ref</a><a href="#topic-n127">In</a></nav>
+</section><section class="static-detail" id="topic-n123" style="--branch:#ed656d">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Type System</div>
+<h2>Param</h2><p class="static-description">An ordinary value parameter receives a copy of its argument value.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>void Increment(int x) { x++; } // caller variable unchanged</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n122">← Parameters</a><a href="#topic-n124">Out</a><a href="#topic-n125">Value</a><a href="#topic-n126">Ref</a><a href="#topic-n127">In</a></nav>
+</section><section class="static-detail" id="topic-n124" style="--branch:#ed656d">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Type System</div>
+<h2>Out</h2><p class="static-description">An out parameter passes a variable by reference and requires assignment before return.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>bool ok = int.TryParse(&quot;42&quot;, out int value);</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n122">← Parameters</a><a href="#topic-n123">Param</a><a href="#topic-n125">Value</a><a href="#topic-n126">Ref</a><a href="#topic-n127">In</a></nav>
+</section><section class="static-detail" id="topic-n125" style="--branch:#ed656d">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Type System</div>
+<h2>Value</h2><p class="static-description">Passing by value copies the argument value or object reference into the parameter.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>void Print(int count) =&gt; Console.WriteLine(count);</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n122">← Parameters</a><a href="#topic-n123">Param</a><a href="#topic-n124">Out</a><a href="#topic-n126">Ref</a><a href="#topic-n127">In</a></nav>
+</section><section class="static-detail" id="topic-n126" style="--branch:#ed656d">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Type System</div>
+<h2>Ref</h2><p class="static-description">A ref parameter refers directly to an existing variable. The variable must be assigned before the call.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>void Double(ref int n) =&gt; n *= 2;</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n122">← Parameters</a><a href="#topic-n123">Param</a><a href="#topic-n124">Out</a><a href="#topic-n125">Value</a><a href="#topic-n127">In</a></nav>
+</section><section class="static-detail" id="topic-n127" style="--branch:#ed656d">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Type System</div>
+<h2>In</h2><p class="static-description">An in parameter passes an argument by read-only reference.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>void Print(in int n) =&gt; Console.WriteLine(n);</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n122">← Parameters</a><a href="#topic-n123">Param</a><a href="#topic-n124">Out</a><a href="#topic-n125">Value</a><a href="#topic-n126">Ref</a></nav>
+</section><section class="static-detail" id="topic-n128" style="--branch:#ed656d">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Type System</div>
+<h2>Instance</h2><p class="static-description">An instance method operates on a particular object and can access its instance members.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>var user = new User();
+user.Save();</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n121">← Methods</a><a href="#topic-n122">Parameters</a><a href="#topic-n129">Static</a><a href="#topic-n130">Virtual/Abstract</a><a href="#topic-n131">Override</a></nav>
+</section><section class="static-detail" id="topic-n129" style="--branch:#ed656d">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Type System</div>
+<h2>Static</h2><p class="static-description">A static method belongs to a type rather than a particular instance.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>double root = Math.Sqrt(9);</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n121">← Methods</a><a href="#topic-n122">Parameters</a><a href="#topic-n128">Instance</a><a href="#topic-n130">Virtual/Abstract</a><a href="#topic-n131">Override</a></nav>
+</section><section class="static-detail" id="topic-n130" style="--branch:#ed656d">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Type System</div>
+<h2>Virtual/Abstract</h2><p class="static-description">virtual methods can be overridden. abstract methods require an implementation in a non-abstract derived class.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>public virtual string Describe() =&gt; &quot;Base&quot;;</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n121">← Methods</a><a href="#topic-n122">Parameters</a><a href="#topic-n128">Instance</a><a href="#topic-n129">Static</a><a href="#topic-n131">Override</a></nav>
+</section><section class="static-detail" id="topic-n131" style="--branch:#ed656d">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Type System</div>
+<h2>Override</h2><p class="static-description">override replaces an inherited virtual or abstract member implementation.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>public override string ToString() =&gt; Name;</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n121">← Methods</a><a href="#topic-n122">Parameters</a><a href="#topic-n128">Instance</a><a href="#topic-n129">Static</a><a href="#topic-n130">Virtual/Abstract</a></nav>
+</section><section class="static-detail" id="topic-n132" style="--branch:#ed656d">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Type System</div>
+<h2>Constructors</h2><p class="static-description">Constructors initialize new objects or, with static constructors, initialize a type.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>public User(string name) { Name = name; }</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n119">← Class members</a><a href="#topic-n133">Static</a><a href="#topic-n134">Instance</a></nav>
+</section><section class="static-detail" id="topic-n133" style="--branch:#ed656d">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Type System</div>
+<h2>Static</h2><p class="static-description">A static constructor runs automatically to initialize a type before its first relevant use.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>static Cache() { InstanceCount = 0; }</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n132">← Constructors</a><a href="#topic-n134">Instance</a></nav>
+</section><section class="static-detail" id="topic-n134" style="--branch:#ed656d">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Type System</div>
+<h2>Instance</h2><p class="static-description">An instance constructor runs when you create a new object.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>public User(string name) { Name = name; }</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n132">← Constructors</a><a href="#topic-n133">Static</a></nav>
+</section><section class="static-detail" id="topic-n135" style="--branch:#ed656d">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Type System</div>
+<h2>Fields</h2><p class="static-description">Fields are variables declared directly within a type.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>private int _count;</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n118">← Class</a><a href="#topic-n136">Static</a><a href="#topic-n137">Instance</a><a href="#topic-n138">Readonly</a></nav>
+</section><section class="static-detail" id="topic-n136" style="--branch:#ed656d">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Type System</div>
+<h2>Static</h2><p class="static-description">A static field belongs to the type and is shared by its instances.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>private static int _nextId = 1;</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n135">← Fields</a><a href="#topic-n137">Instance</a><a href="#topic-n138">Readonly</a></nav>
+</section><section class="static-detail" id="topic-n137" style="--branch:#ed656d">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Type System</div>
+<h2>Instance</h2><p class="static-description">An instance field belongs to one object.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>private int _count;</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n135">← Fields</a><a href="#topic-n136">Static</a><a href="#topic-n138">Readonly</a></nav>
+</section><section class="static-detail" id="topic-n138" style="--branch:#ed656d">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Type System</div>
+<h2>Readonly</h2><p class="static-description">A readonly field can be assigned in its declaration or an applicable constructor.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>private readonly Guid _id = Guid.NewGuid();</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n135">← Fields</a><a href="#topic-n136">Static</a><a href="#topic-n137">Instance</a></nav>
+</section><section class="static-detail" id="topic-n139" style="--branch:#ed656d">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Type System</div>
+<h2>Access modifiers</h2><p class="static-description">Access modifiers restrict where types and members can be accessed.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>public int Id { get; private set; }</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n118">← Class</a><a href="#topic-n140">Public</a><a href="#topic-n141">Private</a><a href="#topic-n142">Protected</a><a href="#topic-n143">Internal</a><a href="#topic-n144">Protected internal</a></nav>
+</section><section class="static-detail" id="topic-n140" style="--branch:#ed656d">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Type System</div>
+<h2>Public</h2><p class="static-description">public members are accessible wherever their containing type is accessible.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>public string Name { get; set; } = &quot;&quot;;</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n139">← Access modifiers</a><a href="#topic-n141">Private</a><a href="#topic-n142">Protected</a><a href="#topic-n143">Internal</a><a href="#topic-n144">Protected internal</a></nav>
+</section><section class="static-detail" id="topic-n141" style="--branch:#ed656d">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Type System</div>
+<h2>Private</h2><p class="static-description">private members are accessible only within their containing type (subject to C# nested-type rules).</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>private int _count;</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n139">← Access modifiers</a><a href="#topic-n140">Public</a><a href="#topic-n142">Protected</a><a href="#topic-n143">Internal</a><a href="#topic-n144">Protected internal</a></nav>
+</section><section class="static-detail" id="topic-n142" style="--branch:#ed656d">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Type System</div>
+<h2>Protected</h2><p class="static-description">protected members are accessible in their containing class and derived classes.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>protected virtual void OnChanged() { }</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n139">← Access modifiers</a><a href="#topic-n140">Public</a><a href="#topic-n141">Private</a><a href="#topic-n143">Internal</a><a href="#topic-n144">Protected internal</a></nav>
+</section><section class="static-detail" id="topic-n143" style="--branch:#ed656d">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Type System</div>
+<h2>Internal</h2><p class="static-description">internal members are accessible within the same assembly.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>internal class InternalService { }</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n139">← Access modifiers</a><a href="#topic-n140">Public</a><a href="#topic-n141">Private</a><a href="#topic-n142">Protected</a><a href="#topic-n144">Protected internal</a></nav>
+</section><section class="static-detail" id="topic-n144" style="--branch:#ed656d">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Type System</div>
+<h2>Protected internal</h2><p class="static-description">protected internal allows access from the same assembly or from a derived type in another assembly.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>protected internal void UpdateState() { }</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n139">← Access modifiers</a><a href="#topic-n140">Public</a><a href="#topic-n141">Private</a><a href="#topic-n142">Protected</a><a href="#topic-n143">Internal</a></nav>
+</section><section class="static-detail" id="topic-n145" style="--branch:#ed656d">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Type System</div>
+<h2>Interface</h2><p class="static-description">An interface defines a contract that implementing types must satisfy.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>interface ILogger { void Log(string message); }</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n117">← Reference types</a><a href="#topic-n118">Class</a><a href="#topic-n146">Delegate</a><a href="#topic-n147">Array</a></nav>
+</section><section class="static-detail" id="topic-n146" style="--branch:#ed656d">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Type System</div>
+<h2>Delegate</h2><p class="static-description">A delegate is a type that references methods with a compatible signature.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>delegate int Transformer(int input);</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n117">← Reference types</a><a href="#topic-n118">Class</a><a href="#topic-n145">Interface</a><a href="#topic-n147">Array</a></nav>
+</section><section class="static-detail" id="topic-n147" style="--branch:#ed656d">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Type System</div>
+<h2>Array</h2><p class="static-description">An array stores a fixed number of elements of one declared element type.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>int[] values = { 1, 2, 3 };</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n117">← Reference types</a><a href="#topic-n148">Single-dimensional arrays</a><a href="#topic-n149">Multi-dimensional arrays</a></nav>
+</section><section class="static-detail" id="topic-n148" style="--branch:#ed656d">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Type System</div>
+<h2>Single-dimensional arrays</h2><p class="static-description">A single-dimensional array uses one index.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>int[] scores = new int[3];
+scores[0] = 10;</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n147">← Array</a><a href="#topic-n149">Multi-dimensional arrays</a></nav>
+</section><section class="static-detail" id="topic-n149" style="--branch:#ed656d">
+<div class="static-detail-top"><span>C# TOPIC REFERENCE</span><a class="static-close" href="#mapArea" aria-label="Close topic panel">×</a></div>
+<div class="static-category">Type System</div>
+<h2>Multi-dimensional arrays</h2><p class="static-description">A rectangular multidimensional array uses more than one index, such as a row index and a column index.</p>
+<div class="static-label">C# EXAMPLE</div><pre><code>int[,] grid = new int[2, 3];
+grid[0, 1] = 7;</code></pre>
+<div class="static-label">EXPLORE RELATED TOPICS</div><nav class="static-links"><a href="#topic-n147">← Array</a><a href="#topic-n148">Single-dimensional arrays</a></nav>
+</section></div>
+      <div class="canvas-instruction">Select a node for details <strong>·</strong> Expand branches with <strong>+</strong> <strong>·</strong> Drag to move</div>
+      <div class="control-panel" aria-label="Map controls">
+        <button id="zoomOut" class="tool-btn" aria-label="Zoom out" title="Zoom out">−</button><span id="zoomLevel" class="zoom-value">100%</span><button id="zoomIn" class="tool-btn" aria-label="Zoom in" title="Zoom in">+</button>
+        <span class="tool-sep"></span><button id="fitView" class="tool-btn" aria-label="Fit all visible nodes" title="Fit view">⛶</button><button id="resetView" class="tool-btn" aria-label="Reset map" title="Reset map">↺</button>
+      </div>
+    </main>
+    <div id="panelShade" class="panel-shade"></div>
+    <aside id="details" class="details" aria-hidden="true" aria-label="Selected topic details">
+      <div class="details-header"><span class="details-caption">TOPIC DETAILS</span><button id="closePanel" class="panel-close" aria-label="Close details">×</button></div>
+      <div id="detailsScroll" class="details-scroll">
+        <div id="detailCrumbs" class="crumb"></div>
+        <div id="detailTag" class="detail-tag"><span id="tagDot" class="tag-dot"></span><span id="tagText"></span></div>
+        <h1 id="detailTitle" class="detail-title"></h1>
+        <div class="section-title">Overview</div><p id="detailDescription" class="detail-desc"></p>
+        <div class="section-title">C# example</div>
+        <div class="code-shell"><div class="code-head"><span class="code-lang">C#</span><button id="copyCode" class="copy-btn">Copy code</button></div><pre class="code-body"><code id="detailCode"></code></pre></div>
+        <hr class="related-divider" /><div class="section-title">Explore related topics</div><div class="related-list" id="relatedList"></div>
+        <p class="muted-tip">Examples focus on the selected concept. Some snippets require surrounding declarations or using directives.</p>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<script>
+/* Small independent script: the map can fail to run without disabling the theme selector. */
+(function(){
+  'use strict';
+  const key='csharp-knowledge-map-theme';
+  const choice=document.querySelectorAll('input[name="color-theme"]');
+  const meta=document.querySelector('meta[name="theme-color"]');
+  const isValid=v=>v==='auto'||v==='dark'||v==='light';
+  let saved='auto';
+  try{const value=localStorage.getItem(key);if(isValid(value))saved=value;}catch(e){}
+  function refresh(){
+    const current=document.querySelector('input[name="color-theme"]:checked');
+    const theme=current?current.value:'auto';
+    if(theme==='auto')document.documentElement.removeAttribute('data-theme');
+    else document.documentElement.setAttribute('data-theme',theme);
+    if(meta){
+      const paper=getComputedStyle(document.documentElement).getPropertyValue('--t-paper').trim();
+      meta.setAttribute('content',paper||'#ffffff');
+    }
+  }
+  const checked=document.getElementById('theme-'+saved);
+  if(checked)checked.checked=true;
+  refresh();
+  for(const radio of choice){
+    radio.addEventListener('change',function(){
+      if(!this.checked)return;
+      refresh();
+      try{localStorage.setItem(key,this.value);}catch(e){}
+      const menu=document.getElementById('themePicker');if(menu)menu.open=false;
+    });
+  }
+  if(window.matchMedia){
+    const media=window.matchMedia('(prefers-color-scheme: dark)');
+    if(media.addEventListener)media.addEventListener('change',refresh);
+    else if(media.addListener)media.addListener(refresh);
+  }
+  document.addEventListener('pointerdown',function(e){
+    const picker=document.getElementById('themePicker');
+    if(picker&&picker.open&&!picker.contains(e.target))picker.open=false;
+  });
+})();
+</script>
+
+<script>
+const TOPICS = [{"id":"n001","code":"Console.WriteLine(\"Hello, C#!\");","parent":null,"name":"C#","summary":"Explore C# types, expressions, collections, operators, control flow, and LINQ. Select a topic to read a short explanation and code example."},{"id":"n002","code":"int total = price * quantity;","parent":"n001","name":"Expressions","summary":"An expression evaluates to a value, object, or variable. Expressions can appear in assignments, conditions, and method calls."},{"id":"n003","code":"Func<int, int> square = x => x * x;\nConsole.WriteLine(square(5)); // 25","parent":"n002","name":"Lambda Expressions","summary":"A lambda expression defines an anonymous function with the => operator. You can pass a lambda to LINQ methods and delegates."},{"id":"n004","code":"var names = new List<string> { \"Ada\", \"Lin\" };","parent":"n001","name":"Collections","summary":"Collections store multiple items. Choose a collection based on item type, ordering, lookup needs, and performance."},{"id":"n005","code":"List<int> numbers = new() { 1, 2, 3 };","parent":"n004","name":"Generic","summary":"Generic collections specify element types at compile time. They provide type safety without manual casts."},{"id":"n006","code":"var scores = new List<int> { 4, 7 };\nscores.Add(9);","parent":"n005","name":"List","summary":"List<T> is a resizable, ordered sequence of elements."},{"id":"n007","code":"var ranks = new SortedList<int, string> { [2] = \"B\", [1] = \"A\" };","parent":"n005","name":"SortedList","summary":"SortedList<TKey,TValue> stores key-value pairs sorted by key."},{"id":"n008","code":"var jobs = new Queue<string>();\njobs.Enqueue(\"Build\");\nstring next = jobs.Dequeue();","parent":"n005","name":"Queue","summary":"Queue<T> uses first-in, first-out ordering."},{"id":"n009","code":"var history = new Stack<string>();\nhistory.Push(\"Page 1\");\nstring last = history.Pop();","parent":"n005","name":"Stack","summary":"Stack<T> uses last-in, first-out ordering."},{"id":"n010","code":"var ages = new Dictionary<string, int> { [\"Ada\"] = 30 };\nint age = ages[\"Ada\"];","parent":"n005","name":"Dictionary","summary":"Dictionary<TKey,TValue> associates unique keys with values for fast lookup."},{"id":"n011","code":"System.Collections.ArrayList values = new();\nvalues.Add(10);","parent":"n004","name":"Non-generic","summary":"Non-generic collections store values as object. Prefer generic collections for new, strongly typed code."},{"id":"n012","code":"var values = new System.Collections.ArrayList { 1, \"two\" };","parent":"n011","name":"ArrayList","summary":"ArrayList is a resizable, non-generic list. Elements are stored as object."},{"id":"n013","code":"var table = new System.Collections.Hashtable();\ntable[\"id\"] = 42;","parent":"n011","name":"HashTable","summary":"Hashtable is a non-generic key-value collection. Keys are unique."},{"id":"n014","code":"var items = new System.Collections.SortedList();\nitems.Add(1, \"First\");","parent":"n011","name":"SortedList","summary":"System.Collections.SortedList is a non-generic, key-sorted collection."},{"id":"n015","code":"var stack = new System.Collections.Stack();\nstack.Push(\"A\");\nvar item = stack.Pop();","parent":"n011","name":"Stack","summary":"System.Collections.Stack is a non-generic last-in, first-out collection."},{"id":"n016","code":"var queue = new System.Collections.Queue();\nqueue.Enqueue(\"A\");\nvar item = queue.Dequeue();","parent":"n011","name":"Queue","summary":"System.Collections.Queue is a non-generic first-in, first-out collection."},{"id":"n017","code":"int result = (4 + 6) * 2;","parent":"n001","name":"Operators","summary":"Operators perform calculations, comparisons, assignments, and other operations on operands."},{"id":"n018","code":"int remainder = 10 % 3; // 1","parent":"n017","name":"Arithmetic","summary":"Arithmetic operators calculate numeric results: +, -, *, /, and %."},{"id":"n019","code":"int result = 7 / 2; // 3 (integer division)","parent":"n018","name":"+, -, *, /, %","summary":"Use + to add, - to subtract, * to multiply, / to divide, and % to calculate the remainder."},{"id":"n020","code":"int count = 2;\ncount += 3; // 5","parent":"n017","name":"Assignment","summary":"Assignment operators assign or update values. Examples include =, +=, -=, and *=."},{"id":"n021","code":"int items = 5;","parent":"n020","name":"=","summary":"The = operator assigns the right-hand value to a variable or property."},{"id":"n022","code":"int flags = 0b0101 | 0b0010; // 0b0111","parent":"n017","name":"Bitwise","summary":"Bitwise operators manipulate bits in integer values. Shift operators move bits left or right."},{"id":"n023","code":"int doubled = 3 << 1; // 6","parent":"n022","name":"<<, >>, <<=, >>=, &, |, ^","summary":"Bitwise operators support shifts, bitwise AND, OR, XOR, and related assignments."},{"id":"n024","code":"int n = int.MaxValue;\nchecked { n += 1; } // throws","parent":"n017","name":"Overflow","summary":"A checked context detects overflow for applicable integral arithmetic and conversions. An unchecked context permits truncation or wraparound in those cases."},{"id":"n025","code":"int max = int.MaxValue;\nint result = checked(max + 1); // throws","parent":"n024","name":"checked","summary":"Use checked to detect overflow in applicable integral operations and conversions."},{"id":"n026","code":"int n = unchecked(int.MaxValue + 1); // int.MinValue","parent":"n024","name":"unchecked","summary":"Use unchecked to suppress overflow checks for applicable integral operations."},{"id":"n027","code":"public static Vector operator +(Vector a, Vector b) => new(a.X + b.X, a.Y + b.Y);","parent":"n017","name":"Overloading","summary":"Operator overloading lets a type define the behavior of selected operators."},{"id":"n028","code":"bool isAdult = age >= 18;","parent":"n017","name":"Relational","summary":"Relational and equality operators compare operands and return a Boolean result."},{"id":"n029","code":"bool same = 5 == 5; // true","parent":"n028","name":"==, !=, >, <","summary":"Equality and relational operators test equality, inequality, and ordering."},{"id":"n030","code":"var even = numbers.Where(n => n % 2 == 0).ToList();","parent":"n001","name":"LINQ","summary":"Language Integrated Query (LINQ) provides operators to filter, transform, group, and combine data from sequences and other supported sources."},{"id":"n031","code":"var names = people.Select(p => p.Name);","parent":"n030","name":"Projection","summary":"Projection transforms each source element into a new result."},{"id":"n032","code":"var lengths = words.Select(w => w.Length);","parent":"n031","name":"Select","summary":"Select transforms each element using a projection function."},{"id":"n033","code":"var all = groups.SelectMany(group => group);","parent":"n031","name":"SelectMany","summary":"SelectMany flattens nested sequences into one sequence."},{"id":"n034","code":"int total = prices.Sum();","parent":"n030","name":"Aggregation","summary":"Aggregation combines multiple elements into one value or summary."},{"id":"n035","code":"var newest = orders.MaxBy(o => o.Date);","parent":"n034","name":"Max(By)","summary":"Max returns the largest value. MaxBy returns the element with the largest selected key."},{"id":"n036","code":"var cheapest = products.MinBy(p => p.Price);","parent":"n034","name":"Min(By)","summary":"Min returns the smallest value. MinBy returns the element with the smallest selected key."},{"id":"n037","code":"int product = numbers.Aggregate(1, (a, n) => a * n);","parent":"n034","name":"Aggregate","summary":"Aggregate repeatedly combines elements with an accumulator function."},{"id":"n038","code":"decimal total = orders.Sum(o => o.Amount);","parent":"n034","name":"Sum","summary":"Sum adds numeric values or selected numeric properties."},{"id":"n039","code":"int adults = people.Count(p => p.Age >= 18);","parent":"n034","name":"Count","summary":"Count returns the number of elements, optionally matching a predicate."},{"id":"n040","code":"var unique = first.Union(second);","parent":"n030","name":"Set","summary":"LINQ set operators combine or compare sequences using set-style semantics."},{"id":"n041","code":"var common = left.Intersect(right);","parent":"n040","name":"Intersect","summary":"Intersect returns distinct elements present in both sequences."},{"id":"n042","code":"var all = left.Union(right);","parent":"n040","name":"Union","summary":"Union returns the distinct elements from both sequences."},{"id":"n043","code":"var missing = expected.Except(actual);","parent":"n040","name":"Except","summary":"Except returns distinct elements in the first sequence but not the second."},{"id":"n044","code":"bool anyInvalid = items.Any(x => !x.IsValid);","parent":"n030","name":"Quantification","summary":"Quantification operators check whether elements satisfy a condition."},{"id":"n045","code":"bool allPositive = numbers.All(n => n > 0);","parent":"n044","name":"All","summary":"All returns true if all elements satisfy a predicate. It also returns true for an empty sequence."},{"id":"n046","code":"bool hasErrors = errors.Any();","parent":"n044","name":"Any","summary":"Any tests whether the sequence contains elements or a matching element."},{"id":"n047","code":"bool found = names.Contains(\"Ada\");","parent":"n044","name":"Contains","summary":"Contains tests whether a sequence has a specified value."},{"id":"n048","code":"bool equal = first.SequenceEqual(second);","parent":"n044","name":"SequenceEquals","summary":"The C# LINQ method is named SequenceEqual (singular). It compares two sequences element by element in order."},{"id":"n049","code":"var first = values.FirstOrDefault();","parent":"n030","name":"Element","summary":"Element operators return one element from a sequence. Some variants return a default value when no match exists."},{"id":"n050","code":"var first = products.FirstOrDefault(p => p.InStock);","parent":"n049","name":"First(OrDefault)","summary":"First returns the first matching element or throws if none exists. FirstOrDefault returns a default value instead."},{"id":"n051","code":"var user = users.SingleOrDefault(u => u.Id == id);","parent":"n049","name":"Single(OrDefault)","summary":"Single expects exactly one match. SingleOrDefault also allows zero matches but throws on multiple matches."},{"id":"n052","code":"var latest = records.LastOrDefault();","parent":"n049","name":"Last(OrDefault)","summary":"Last returns the final matching element. LastOrDefault returns the default value if there is no match."},{"id":"n053","code":"var third = values.ElementAt(2);","parent":"n049","name":"ElementAt","summary":"ElementAt returns the element at a zero-based index. It throws if the index is outside the sequence."},{"id":"n054","code":"var byCity = people.GroupBy(p => p.City);","parent":"n030","name":"Grouping","summary":"Grouping collects elements into groups based on a key."},{"id":"n055","code":"var grouped = orders.GroupBy(o => o.CustomerId);","parent":"n054","name":"GroupBy","summary":"GroupBy returns an IGrouping<TKey,TElement> sequence for each distinct key."},{"id":"n056","code":"var adults = people.Where(p => p.Age >= 18);","parent":"n030","name":"Filtering","summary":"Filtering selects elements according to predicates, types, or position."},{"id":"n057","code":"var evens = numbers.Where(n => n % 2 == 0);","parent":"n056","name":"Where","summary":"Where includes only elements that match a Boolean predicate."},{"id":"n058","code":"var firstThree = numbers.Take(3);","parent":"n056","name":"Take(While)","summary":"Take selects the first N elements. TakeWhile selects the initial run matching a condition."},{"id":"n059","code":"var afterThree = numbers.Skip(3);","parent":"n056","name":"Skip(While)","summary":"Skip excludes the first N elements. SkipWhile excludes the initial run matching a condition."},{"id":"n060","code":"var numbers = mixed.OfType<int>();","parent":"n056","name":"OfType","summary":"OfType<T> returns only elements that can be converted to the specified type."},{"id":"n061","code":"var uniqueUsers = users.DistinctBy(u => u.Email);","parent":"n056","name":"Distinct(By)","summary":"Distinct removes duplicate values. DistinctBy removes duplicates using a selected key."},{"id":"n062","code":"var pairs = left.Zip(right);","parent":"n030","name":"Merging","summary":"Merging operators associate or pair elements from multiple sequences."},{"id":"n063","code":"var result = orders.Join(users, o => o.UserId, u => u.Id, (o, u) => new { o, u });","parent":"n062","name":"Join","summary":"Join matches elements from two sequences using keys."},{"id":"n064","code":"var pairs = names.Zip(ages, (name, age) => new { name, age });","parent":"n062","name":"Zip","summary":"Zip combines corresponding elements from two sequences."},{"id":"n065","code":"List<int> result = query.ToList();","parent":"n030","name":"Conversion","summary":"Conversion operators change the representation of a query result."},{"id":"n066","code":"var ints = objects.Cast<int>();","parent":"n065","name":"Cast","summary":"Cast<T> converts each element to a specified type and throws if an element cannot be cast."},{"id":"n067","code":"var byId = users.ToDictionary(u => u.Id);","parent":"n065","name":"ToDictionary","summary":"ToDictionary creates a dictionary from elements using selected keys and values. Duplicate keys throw."},{"id":"n068","code":"var byCity = people.ToLookup(p => p.City);","parent":"n065","name":"ToLookup","summary":"ToLookup creates a read-only key-to-many-values lookup."},{"id":"n069","code":"int[] values = query.ToArray();","parent":"n065","name":"ToArray","summary":"ToArray materializes the sequence as an array."},{"id":"n070","code":"List<int> values = query.ToList();","parent":"n065","name":"ToList","summary":"ToList materializes the sequence as a List<T>."},{"id":"n071","code":"if (isReady) { Start(); }","parent":"n001","name":"Statements","summary":"Statements control program execution, declare local variables, handle errors, and perform actions."},{"id":"n072","code":"IEnumerable<int> Get() { yield return 1; yield return 2; }","parent":"n071","name":"Yield","summary":"yield return produces sequence elements one at a time from an iterator. yield break ends iteration."},{"id":"n073","code":"unsafe { int value = 7; int* p = &value; }","parent":"n071","name":"Unsafe","summary":"unsafe allows pointer operations in code compiled with unsafe support."},{"id":"n074","code":"using var stream = File.OpenRead(path);","parent":"n071","name":"Using","summary":"A using statement disposes an IDisposable object when control exits its scope."},{"id":"n075","code":"lock (_gate) { _count++; }","parent":"n071","name":"Lock","summary":"lock limits execution of a critical section to one thread at a time for a given lock object."},{"id":"n076","code":"if (score >= 50) { Pass(); } else { Retry(); }","parent":"n071","name":"Control flow","summary":"Conditional statements choose which code executes based on conditions or pattern matches."},{"id":"n077","code":"if (age >= 18) Console.WriteLine(\"Adult\");\nelse Console.WriteLine(\"Minor\");","parent":"n076","name":"If-else","summary":"if runs a statement when a condition is true. else runs an alternative when false."},{"id":"n078","code":"switch (status) { case \"OK\": Handle(); break; default: Log(); break; }","parent":"n076","name":"Switch","summary":"switch selects a branch using values, patterns, and optional conditions."},{"id":"n079","code":"foreach (var item in items) Console.WriteLine(item);","parent":"n071","name":"Loops","summary":"Loops repeat code. Use for, foreach, while, or do-while depending on how repetition ends."},{"id":"n080","code":"for (int i = 0; i < 3; i++) Console.WriteLine(i);","parent":"n079","name":"For","summary":"for repeats code with an initializer, a condition, and an iteration step."},{"id":"n081","code":"foreach (string name in names) Console.WriteLine(name);","parent":"n079","name":"Foreach","summary":"foreach iterates over each element of a collection or sequence."},{"id":"n082","code":"do { ReadInput(); } while (needsInput);","parent":"n079","name":"Do..while","summary":"do-while executes the loop body at least once and tests the condition afterward."},{"id":"n083","code":"while (queue.Count > 0) Process(queue.Dequeue());","parent":"n079","name":"While","summary":"while repeats the loop body while its condition remains true."},{"id":"n084","code":"try { Save(); } catch (IOException ex) { Log(ex); }","parent":"n071","name":"Error handling","summary":"Exception-handling statements use try, catch, and finally to handle failures and cleanup."},{"id":"n085","code":"try { Read(); } catch (IOException ex) { Log(ex); } finally { Cleanup(); }","parent":"n084","name":"Try-catch-finally","summary":"try contains code that can throw. catch handles matching exceptions. finally executes during normal and exceptional exits."},{"id":"n086","code":"int age = 30;\nstring name = \"Ada\";","parent":"n001","name":"Type System","summary":"The C# type system defines what values can be stored, how members are accessed, and how types relate."},{"id":"n087","code":"int count = 5;\nbool enabled = true;","parent":"n086","name":"Predefined Types","summary":"Predefined types have language keywords such as int, bool, object, and string."},{"id":"n088","code":"int a = 1; int b = a; b = 2; // a is still 1","parent":"n087","name":"Value","summary":"Value types store values directly. A value assignment normally copies the value."},{"id":"n089","code":"int quantity = 3;\ndouble weight = 1.5;","parent":"n088","name":"Numeric","summary":"Numeric types store integer or floating-point values."},{"id":"n090","code":"int count = -5;\nuint positive = 5u;","parent":"n089","name":"Integer","summary":"Integer types store whole numbers. Signed and unsigned types have different ranges."},{"id":"n091","code":"sbyte delta = -10;\nbyte level = 255;","parent":"n090","name":"8-bit","summary":"The 8-bit integer types are sbyte (signed) and byte (unsigned)."},{"id":"n092","code":"sbyte temperatureChange = -12;","parent":"n091","name":"sbyte","summary":"sbyte is a signed 8-bit integer with a range from -128 to 127."},{"id":"n093","code":"byte alpha = 255;","parent":"n091","name":"byte","summary":"byte is an unsigned 8-bit integer with a range from 0 to 255."},{"id":"n094","code":"short a = -300; ushort b = 60000;","parent":"n090","name":"16-bit","summary":"The 16-bit integer types are short (signed) and ushort (unsigned)."},{"id":"n095","code":"short change = -32000;","parent":"n094","name":"short","summary":"short is a signed 16-bit integer."},{"id":"n096","code":"ushort port = 50000;","parent":"n094","name":"ushort","summary":"ushort is an unsigned 16-bit integer."},{"id":"n097","code":"int balance = -100; uint size = 100u;","parent":"n090","name":"32-bit","summary":"The 32-bit integer types are int (signed) and uint (unsigned)."},{"id":"n098","code":"int total = 42;","parent":"n097","name":"int","summary":"int is a signed 32-bit integer used for many whole-number calculations."},{"id":"n099","code":"uint capacity = 4000000000u;","parent":"n097","name":"uint","summary":"uint is an unsigned 32-bit integer."},{"id":"n100","code":"long distance = 9000000000L;","parent":"n090","name":"64-bit","summary":"The 64-bit integer types are long (signed) and ulong (unsigned)."},{"id":"n101","code":"long ticks = 9000000000L;","parent":"n100","name":"long","summary":"long is a signed 64-bit integer."},{"id":"n102","code":"ulong bytes = 18000000000UL;","parent":"n100","name":"ulong","summary":"ulong is an unsigned 64-bit integer."},{"id":"n103","code":"decimal price = 19.99m;\ndouble ratio = 0.5;","parent":"n089","name":"Floating Point","summary":"This branch groups decimal, float, and double. decimal is base-10, while float and double use binary floating-point."},{"id":"n104","code":"decimal price = 19.95m;","parent":"n103","name":"decimal","summary":"decimal is a 128-bit decimal type suited to many financial calculations."},{"id":"n105","code":"float rate = 0.75f;","parent":"n103","name":"float","summary":"float is a 32-bit binary floating-point type."},{"id":"n106","code":"double pi = 3.141592653589793;","parent":"n103","name":"double","summary":"double is a 64-bit binary floating-point type."},{"id":"n107","code":"bool isActive = true;\nchar initial = 'A';","parent":"n088","name":"Non-numeric","summary":"Predefined non-numeric value types include bool and char."},{"id":"n108","code":"bool enabled = false;","parent":"n107","name":"bool","summary":"bool represents the Boolean values true and false."},{"id":"n109","code":"char letter = 'A';","parent":"n107","name":"char","summary":"char stores one UTF-16 code unit."},{"id":"n110","code":"var first = new Person();\nvar second = first;","parent":"n087","name":"Reference","summary":"Reference types hold references to objects. Assignment copies a reference rather than duplicating the object."},{"id":"n111","code":"object value = 42;","parent":"n110","name":"Object","summary":"object is the root type of the .NET type hierarchy. It can refer to values of any type."},{"id":"n112","code":"string message = \"Hello\";","parent":"n110","name":"String","summary":"string represents an immutable sequence of UTF-16 code units."},{"id":"n113","code":"public record Person(string Name);","parent":"n086","name":"User-defined Types","summary":"You can declare types such as classes, structs, enums, interfaces, and delegates."},{"id":"n114","code":"public struct Point { public int X, Y; }","parent":"n113","name":"Value types","summary":"User-defined value types include struct and enum."},{"id":"n115","code":"public readonly struct Point { public int X { get; init; } }","parent":"n114","name":"struct","summary":"A struct defines a value type. Struct assignment normally copies the value."},{"id":"n116","code":"enum Status { Pending, Approved, Rejected }","parent":"n114","name":"enum","summary":"An enum defines a set of named integral constants."},{"id":"n117","code":"class Customer { public string Name { get; set; } = \"\"; }","parent":"n113","name":"Reference types","summary":"User-defined reference types include class, interface, delegate, and array types."},{"id":"n118","code":"class User { public string Name { get; set; } = \"\"; }","parent":"n117","name":"Class","summary":"A class defines a reference type with fields, properties, methods, and constructors."},{"id":"n119","code":"class Counter { public int Value { get; private set; } }","parent":"n118","name":"Class members","summary":"Class members define data and behavior, such as properties, fields, methods, and constructors."},{"id":"n120","code":"public string Name { get; set; } = \"\";","parent":"n119","name":"Properties","summary":"Properties provide controlled access to values through accessors such as get, set, and init."},{"id":"n121","code":"int Add(int a, int b) => a + b;","parent":"n119","name":"Methods","summary":"A method defines an operation. Methods can accept parameters and return values."},{"id":"n122","code":"void Greet(string name) => Console.WriteLine(name);","parent":"n121","name":"Parameters","summary":"Parameters are named inputs declared in a method signature. C# supports value, ref, out, and in modes."},{"id":"n123","code":"void Increment(int x) { x++; } // caller variable unchanged","parent":"n122","name":"Param","summary":"An ordinary value parameter receives a copy of its argument value."},{"id":"n124","code":"bool ok = int.TryParse(\"42\", out int value);","parent":"n122","name":"Out","summary":"An out parameter passes a variable by reference and requires assignment before return."},{"id":"n125","code":"void Print(int count) => Console.WriteLine(count);","parent":"n122","name":"Value","summary":"Passing by value copies the argument value or object reference into the parameter."},{"id":"n126","code":"void Double(ref int n) => n *= 2;","parent":"n122","name":"Ref","summary":"A ref parameter refers directly to an existing variable. The variable must be assigned before the call."},{"id":"n127","code":"void Print(in int n) => Console.WriteLine(n);","parent":"n122","name":"In","summary":"An in parameter passes an argument by read-only reference."},{"id":"n128","code":"var user = new User();\nuser.Save();","parent":"n121","name":"Instance","summary":"An instance method operates on a particular object and can access its instance members."},{"id":"n129","code":"double root = Math.Sqrt(9);","parent":"n121","name":"Static","summary":"A static method belongs to a type rather than a particular instance."},{"id":"n130","code":"public virtual string Describe() => \"Base\";","parent":"n121","name":"Virtual/Abstract","summary":"virtual methods can be overridden. abstract methods require an implementation in a non-abstract derived class."},{"id":"n131","code":"public override string ToString() => Name;","parent":"n121","name":"Override","summary":"override replaces an inherited virtual or abstract member implementation."},{"id":"n132","code":"public User(string name) { Name = name; }","parent":"n119","name":"Constructors","summary":"Constructors initialize new objects or, with static constructors, initialize a type."},{"id":"n133","code":"static Cache() { InstanceCount = 0; }","parent":"n132","name":"Static","summary":"A static constructor runs automatically to initialize a type before its first relevant use."},{"id":"n134","code":"public User(string name) { Name = name; }","parent":"n132","name":"Instance","summary":"An instance constructor runs when you create a new object."},{"id":"n135","code":"private int _count;","parent":"n118","name":"Fields","summary":"Fields are variables declared directly within a type."},{"id":"n136","code":"private static int _nextId = 1;","parent":"n135","name":"Static","summary":"A static field belongs to the type and is shared by its instances."},{"id":"n137","code":"private int _count;","parent":"n135","name":"Instance","summary":"An instance field belongs to one object."},{"id":"n138","code":"private readonly Guid _id = Guid.NewGuid();","parent":"n135","name":"Readonly","summary":"A readonly field can be assigned in its declaration or an applicable constructor."},{"id":"n139","code":"public int Id { get; private set; }","parent":"n118","name":"Access modifiers","summary":"Access modifiers restrict where types and members can be accessed."},{"id":"n140","code":"public string Name { get; set; } = \"\";","parent":"n139","name":"Public","summary":"public members are accessible wherever their containing type is accessible."},{"id":"n141","code":"private int _count;","parent":"n139","name":"Private","summary":"private members are accessible only within their containing type (subject to C# nested-type rules)."},{"id":"n142","code":"protected virtual void OnChanged() { }","parent":"n139","name":"Protected","summary":"protected members are accessible in their containing class and derived classes."},{"id":"n143","code":"internal class InternalService { }","parent":"n139","name":"Internal","summary":"internal members are accessible within the same assembly."},{"id":"n144","code":"protected internal void UpdateState() { }","parent":"n139","name":"Protected internal","summary":"protected internal allows access from the same assembly or from a derived type in another assembly."},{"id":"n145","code":"interface ILogger { void Log(string message); }","parent":"n117","name":"Interface","summary":"An interface defines a contract that implementing types must satisfy."},{"id":"n146","code":"delegate int Transformer(int input);","parent":"n117","name":"Delegate","summary":"A delegate is a type that references methods with a compatible signature."},{"id":"n147","code":"int[] values = { 1, 2, 3 };","parent":"n117","name":"Array","summary":"An array stores a fixed number of elements of one declared element type."},{"id":"n148","code":"int[] scores = new int[3];\nscores[0] = 10;","parent":"n147","name":"Single-dimensional arrays","summary":"A single-dimensional array uses one index."},{"id":"n149","code":"int[,] grid = new int[2, 3];\ngrid[0, 1] = 7;","parent":"n147","name":"Multi-dimensional arrays","summary":"A rectangular multidimensional array uses more than one index, such as a row index and a column index."}];
+
+</script>
+<script>
+(() => {
+  'use strict';
+  const SVG_NS = 'http://www.w3.org/2000/svg';
+  const ROOT = 'n001';
+  const MAIN_BRANCHES = [
+    {id:'n002',side:'left',color:'#8969e7',name:'Expressions'},
+    {id:'n004',side:'left',color:'#4886f1',name:'Collections'},
+    {id:'n017',side:'left',color:'#19aa87',name:'Operators'},
+    {id:'n030',side:'left',color:'#e0a72e',name:'LINQ'},
+    {id:'n086',side:'right',color:'#ed656d',name:'Type System'},
+    {id:'n071',side:'right',color:'#ef9655',name:'Statements'}
+  ];
+  const $ = (id) => document.getElementById(id);
+  const svg = $('mapSvg');
+  const mapArea = $('mapArea');
+  const stage = $('stage');
+  const edgesLayer = $('edgesLayer');
+  const nodesLayer = $('nodesLayer');
+  const searchInput = $('searchInput');
+  const byId = new Map(TOPICS.map(n=>[n.id,n]));
+  const children = new Map(TOPICS.map(n=>[n.id,[]]));
+  for (const n of TOPICS) if (n.parent) children.get(n.parent).push(n.id);
+  const state = {expanded:new Set([ROOT]),selected:null, positions:new Map(), visible:[],
+    view:{tx:0,ty:0,scale:1}, pointer:null, initial:true};
+
+  function nodeBranch(id){
+    let n = byId.get(id);
+    if (!n) return MAIN_BRANCHES[0];
+    while(n.parent && n.parent!==ROOT) n=byId.get(n.parent);
+    return MAIN_BRANCHES.find(g=>g.id===n.id) || MAIN_BRANCHES[0];
+  }
+  function nodeColor(id){return id==='n113'||ancestors(id).includes('n113')?'#e77d88':nodeBranch(id).color;}
+  function ancestors(id){const result=[];let n=byId.get(id);while(n && n.parent){result.push(n.parent);n=byId.get(n.parent);}return result;}
+  function getChildren(id){return children.get(id)||[];}
+  function descendantsCount(id){return getChildren(id).reduce((count,c)=>count+1+descendantsCount(c),0);}
+  function widthFor(n){return Math.max(121,Math.min(258,Math.ceil(n.name.length*7.1+ (getChildren(n.id).length?104:48))));}
+  function bounds(p){if(p.id===ROOT)return{x:-74,y:-36,w:148,h:72};return {x:p.side==='right'?p.x:p.x-p.w,y:p.y-p.h/2,w:p.w,h:p.h};}
+  function layout(){
+    const positions=new Map([[ROOT,{id:ROOT,x:0,y:0,side:'root',w:148,h:72,depth:0}]]);
+    for (const side of ['left','right']){
+      const groups=MAIN_BRANCHES.filter(b=>b.side===side);
+      let cursor=0;
+      function place(id,depth){
+        const node=byId.get(id);const kids=state.expanded.has(id)?getChildren(id):[];
+        let y;
+        if(kids.length){
+          const ys=kids.map(child=>place(child,depth+1));
+          y=(ys[0]+ys[ys.length-1])/2;
+        } else {y=cursor;cursor+=66;}
+        const pos={id,x:(side==='right'?1:-1)*(210+(depth-1)*287),y,side,w:widthFor(node),h:depth===1?53:41,depth};
+        positions.set(id,pos);
+        return y;
+      }
+      for(const group of groups){place(group.id,1);cursor+=48;}
+      const shift=(cursor-48-66)/2;
+      for(const position of positions.values())if(position.side===side)position.y-=shift;
+    }
+    state.positions=positions;
+    state.visible=[...positions.keys()];
+  }
+  function el(tag,attributes={},txt){
+    const e=document.createElementNS(SVG_NS,tag);
+    for(const [k,v] of Object.entries(attributes))e.setAttribute(k,String(v));
+    if(txt!==undefined)e.textContent=String(txt);
+    return e;
+  }
+  function rgba(hex,a){const raw=hex.replace('#','');const [r,g,b]=[0,2,4].map(i=>parseInt(raw.slice(i,i+2),16));return`rgba(${r},${g},${b},${a})`;}
+  function addPath(parent,child){
+    const pb=bounds(parent), cb=bounds(child),d=child.side==='right'?1:-1;
+    const x1=d===1?pb.x+pb.w:pb.x,x2=d===1?cb.x:cb.x+cb.w;
+    const dy=child.y-parent.y;
+    const control=Math.max(32,Math.abs(x2-x1)*.51);
+    const path=`M ${x1} ${parent.y} C ${x1+d*control} ${parent.y}, ${x2-d*control} ${child.y}, ${x2} ${child.y}`;
+    const p=el('path',{d:path,stroke:nodeColor(child.id),class:`connector ${child.depth===1?'major':''}`});
+    edgesLayer.appendChild(p);
+  }
+  function addNode(p){
+    const node=byId.get(p.id),kids=getChildren(p.id),b=bounds(p),root=p.id===ROOT;
+    const col=root?'#6352de':nodeColor(p.id);
+    const group=el('g',{'data-id':p.id,class:`node-group ${root?'root':p.depth===1?'branch':''} ${state.selected===p.id?'selected':''}`,role:'button',tabindex:'0','aria-label':`${node.name}. ${kids.length} subtopics`});
+    if(root){
+      group.appendChild(el('rect',{x:b.x,y:b.y,width:b.w,height:b.h,rx:19,class:'root-bg'}));
+      group.appendChild(el('text',{x:0,y:-8,class:'root-label'},'C#'));
+      group.appendChild(el('text',{x:0,y:19,class:'root-sub'},`${TOPICS.length-1} concepts`));
+    }else{
+      const bg=el('rect',{x:b.x,y:b.y,width:b.w,height:b.h,rx:p.depth===1?14:11,class:'node-bg'});
+      if(p.depth===1){bg.setAttribute('fill',rgba(col,.11));bg.style.fill=rgba(col,.11);bg.style.stroke=rgba(col,.45);}
+      group.appendChild(bg);
+      group.appendChild(el('rect',{x:b.x+9,y:b.y+10,width:4,height:b.h-20,rx:2,fill:col,opacity:.94,class:'node-dot'}));
+      group.appendChild(el('text',{x:b.x+23,y:b.y+b.h/2+1,class:'node-label'},node.name));
+      if(kids.length){
+        const isOpen=state.expanded.has(p.id);
+        if(!isOpen){
+          group.appendChild(el('text',{x:b.x+b.w-40,y:b.y+b.h/2+1,class:'node-meta','text-anchor':'end'},descendantsCount(p.id)));
+        }
+        const toggle=el('g',{'data-toggle':p.id,class:'toggle',role:'button','aria-label':isOpen?'Collapse branch':'Expand branch'});
+        const cx=b.x+b.w-17,cy=p.y;
+        toggle.appendChild(el('circle',{cx,cy,r:12,class:'toggle-bg'}));
+        toggle.appendChild(el('text',{x:cx,y:cy+.5,class:'toggle-label'},isOpen?'−':'+'));
+        group.appendChild(toggle);
+      }
+    }
+    const title=el('title',{},`${node.name}: ${node.summary}`);
+    group.appendChild(title);
+    nodesLayer.appendChild(group);
+  }
+  function render(){
+    layout();edgesLayer.replaceChildren();nodesLayer.replaceChildren();
+    for (const p of state.positions.values())if(p.id!==ROOT)addPath(state.positions.get(byId.get(p.id).parent),p);
+    for(const p of state.positions.values())addNode(p);
+    $('visibleCount').textContent=state.visible.length;
+    const active=state.selected?nodeBranch(state.selected).id:'';
+    document.querySelectorAll('.nav-item').forEach(b=>b.classList.toggle('current',b.dataset.id===active));
+    applyTransform();
+  }
+  function applyTransform(){
+    const {tx,ty,scale}=state.view;
+    stage.setAttribute('transform',`translate(${tx} ${ty}) scale(${scale})`);
+    $('zoomLevel').textContent=`${Math.round(scale*100)}%`;
+  }
+  function mapSize(){const r=mapArea.getBoundingClientRect();return{width:r.width,height:r.height};}
+  function fitView(){
+    const positions=[...state.positions.values()].map(p=>bounds(p));
+    if(!positions.length)return;
+    const xMin=Math.min(...positions.map(p=>p.x));const yMin=Math.min(...positions.map(p=>p.y));
+    const xMax=Math.max(...positions.map(p=>p.x+p.w));const yMax=Math.max(...positions.map(p=>p.y+p.h));
+    const size=mapSize();
+    const padX=size.width<600?45:125,padY=size.height<700?100:135;
+    const availW=Math.max(150,size.width-padX*2),availH=Math.max(150,size.height-padY*2);
+    const scale=Math.min(1.28,Math.max(.13,Math.min(availW/Math.max(xMax-xMin,1),availH/Math.max(yMax-yMin,1))));
+    state.view.scale=scale;
+    state.view.tx=size.width/2-(xMin+xMax)/2*scale;
+    state.view.ty=size.height/2-(yMin+yMax)/2*scale;
+    applyTransform();
+  }
+  function focusNode(id){
+    const p=state.positions.get(id);if(!p)return;
+    const {width,height}=mapSize();
+    const panelOpen=$('details').classList.contains('open');
+    const effectiveRight=panelOpen && width>520?Math.min(420,width*.62):0;
+    const availableWidth=width-effectiveRight;
+    const related=[p,...getChildren(id).map(child=>state.positions.get(child)).filter(Boolean)];
+    const rectangles=related.map(bounds);
+    const xMin=Math.min(...rectangles.map(r=>r.x)),xMax=Math.max(...rectangles.map(r=>r.x+r.w));
+    const yMin=Math.min(...rectangles.map(r=>r.y)),yMax=Math.max(...rectangles.map(r=>r.y+r.h));
+    if(related.length>1){
+      const fitScale=Math.min(1.28,(availableWidth-100)/Math.max(1,xMax-xMin),(height-160)/Math.max(1,yMax-yMin));
+      state.view.scale=Math.max(.13,Math.min(state.view.scale,fitScale));
+    }
+    state.view.tx=availableWidth/2-(xMin+xMax)/2*state.view.scale;
+    state.view.ty=height/2-(yMin+yMax)/2*state.view.scale;
+    applyTransform();
+  }
+  function setZoom(next,x,y){
+    const {scale,tx,ty}=state.view,size=mapSize();
+    x=x??size.width/2;y=y??size.height/2;
+    const target=Math.max(.13,Math.min(2.3,next));
+    const worldX=(x-tx)/scale,worldY=(y-ty)/scale;
+    state.view={scale:target,tx:x-worldX*target,ty:y-worldY*target};
+    applyTransform();
+  }
+  function select(id,{expand=true,focus=true}={}){
+    if(!byId.has(id))return;
+    for(const parent of ancestors(id))state.expanded.add(parent);
+    if(expand&&getChildren(id).length)state.expanded.add(id);
+    state.selected=id;
+    render();
+    showDetail(id);
+    if(focus)focusNode(id);
+    closeSearch();
+  }
+  function toggleNode(id){
+    if(!getChildren(id).length)return;
+    if(state.expanded.has(id))state.expanded.delete(id);else state.expanded.add(id);
+    render();
+  }
+  function html(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+  function highlight(source){
+    const pattern=/\/\/[^\n]*|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\b(?:public|private|protected|internal|static|readonly|class|struct|enum|interface|delegate|new|var|int|uint|long|ulong|short|ushort|byte|sbyte|bool|char|string|double|decimal|float|void|return|yield|try|catch|finally|if|else|switch|case|break|for|foreach|while|do|using|lock|out|ref|in|override|virtual|abstract|sealed|true|false|null|record|init|this)\b|\b\d+(?:\.\d+)?[mMfFdD]?\b/g;
+    let result='',last=0,match;
+    while((match=pattern.exec(source))!==null){
+      result+=html(source.slice(last,match.index));const token=match[0];
+      const cls=token.startsWith('//')?'code-com':token.startsWith('"')||token.startsWith("'")?'code-str':/^\d/.test(token)?'code-num':'code-key';
+      result+=`<span class="${cls}">${html(token)}</span>`;last=pattern.lastIndex;
+    }
+    return result+html(source.slice(last));
+  }
+  function showDetail(id){
+    const node=byId.get(id),branch=nodeBranch(id),color=id===ROOT?'#6553de':nodeColor(id);
+    $('details').classList.add('open');$('details').setAttribute('aria-hidden','false');$('panelShade').classList.add('show');mapArea.classList.add('panel-active');
+    const crumbs=[...ancestors(id).reverse().map(pid=>byId.get(pid).name),node.name];
+    $('detailCrumbs').textContent=crumbs.join('  /  ');
+    $('detailTitle').textContent=node.name;
+    $('detailDescription').textContent=node.summary;
+    $('detailTag').style.background=rgba(color,.115);$('detailTag').style.color=color;
+    $('tagDot').style.background=color;
+    $('tagText').textContent=id===ROOT?'Overview':branch.name;
+    $('detailCode').innerHTML=highlight(node.code);
+    $('copyCode').textContent='Copy code';
+    const related=$('relatedList');related.replaceChildren();
+    const parent=node.parent?[node.parent]:[];const child=getChildren(id);
+    const siblings=node.parent?getChildren(node.parent).filter(n=>n!==id).slice(0,5):[];
+    const suggested=[...new Set([...parent,...child.slice(0,10),...siblings])];
+    for(const ref of suggested){
+      const b=document.createElement('button');b.className='related-btn';b.textContent=byId.get(ref).name;
+      b.title=byId.get(ref).summary;b.onclick=()=>select(ref);related.appendChild(b);
+    }
+    if(!suggested.length){const span=document.createElement('span');span.className='muted-tip';span.textContent='No related topics in this branch.';related.appendChild(span);}
+    $('detailsScroll').scrollTop=0;
+  }
+  function closeDetail(){
+    $('details').classList.remove('open');$('details').setAttribute('aria-hidden','true');$('panelShade').classList.remove('show');mapArea.classList.remove('panel-active');
+  }
+  function renderNav(){
+    const list=$('navList');list.replaceChildren();
+    for (const group of MAIN_BRANCHES){
+      const b=document.createElement('button');b.type='button';b.className='nav-item';b.dataset.id=group.id;
+      const dot=document.createElement('span');dot.className='nav-dot';dot.style.background=group.color;
+      const label=document.createElement('span');label.className='nav-name';label.textContent=group.name;
+      const count=document.createElement('span');count.className='nav-count';count.textContent=descendantsCount(group.id)+1;
+      b.append(dot,label,count);b.onclick=()=>select(group.id);list.appendChild(b);
+    }
+  }
+  function rankMatches(q){
+    const needle=q.trim().toLowerCase();if(!needle)return[];
+    return TOPICS.map(node=>{
+      const name=node.name.toLowerCase(),desc=node.summary.toLowerCase();
+      const score=(name===needle?120:0)+(name.startsWith(needle)?70:0)+(name.includes(needle)?33:0)+(desc.includes(needle)?4:0);
+      return{node,score};
+    }).filter(r=>r.score>0).sort((a,b)=>b.score-a.score||a.node.name.localeCompare(b.node.name)).slice(0,12).map(r=>r.node);
+  }
+  function closeSearch(){$('searchResults').classList.remove('show');}
+  function updateSearch(){
+    const results=$('searchResults');results.replaceChildren();
+    if(!searchInput.value.trim()){closeSearch();return;}
+    const matches=rankMatches(searchInput.value);
+    if(!matches.length){const el=document.createElement('div');el.className='search-empty';el.textContent='No matching C# topics';results.appendChild(el);}
+    for(const node of matches){
+      const row=document.createElement('button');row.className='search-row';row.type='button';
+      const dot=document.createElement('span');dot.className='search-dot';dot.style.background=nodeColor(node.id);
+      const body=document.createElement('div');body.className='search-row-body';
+      const heading=document.createElement('div');heading.className='search-name';heading.textContent=node.name;
+      const path=document.createElement('div');path.className='search-path';path.textContent=[...ancestors(node.id).reverse().map(pid=>byId.get(pid).name)].join(' / ');
+      body.append(heading,path);row.append(dot,body);row.onclick=()=>{select(node.id,{expand:false});searchInput.value='';};results.appendChild(row);
+    }
+    results.classList.add('show');
+  }
+  async function copyCode(){
+    const node=byId.get(state.selected);if(!node)return;
+    try{
+      if(navigator.clipboard && window.isSecureContext){await navigator.clipboard.writeText(node.code);}
+      else{
+        const ta=document.createElement('textarea');ta.value=node.code;ta.style.position='fixed';ta.style.left='-9999px';
+        document.body.appendChild(ta);ta.select();if(!document.execCommand('copy'))throw new Error('Copy failed');ta.remove();
+      }
+      $('copyCode').textContent='Copied';
+    }catch(e){$('copyCode').textContent='Select code to copy';}
+  }
+  function setupEvents(){
+    svg.addEventListener('pointerdown',e=>{
+      if(e.button!==0)return;
+      const toggle=e.target.closest('[data-toggle]');const node=e.target.closest('[data-id]');
+      state.pointer={id:e.pointerId,startX:e.clientX,startY:e.clientY,tx:state.view.tx,ty:state.view.ty,nodeId:node?.dataset.id,toggleId:toggle?.dataset.toggle,moved:false};
+      svg.setPointerCapture(e.pointerId);
+    });
+    svg.addEventListener('pointermove',e=>{
+      const p=state.pointer;if(!p||p.id!==e.pointerId)return;
+      const dx=e.clientX-p.startX,dy=e.clientY-p.startY;
+      if(Math.abs(dx)+Math.abs(dy)>5)p.moved=true;
+      if(p.moved){svg.classList.add('dragging');state.view.tx=p.tx+dx;state.view.ty=p.ty+dy;applyTransform();}
+    });
+    svg.addEventListener('pointerup',e=>{
+      const p=state.pointer;if(!p||e.pointerId!==p.id)return;
+      if(!p.moved){if(p.toggleId)toggleNode(p.toggleId);else if(p.nodeId)select(p.nodeId);}
+      state.pointer=null;svg.classList.remove('dragging');
+    });
+    svg.addEventListener('pointercancel',()=>{state.pointer=null;svg.classList.remove('dragging');});
+    svg.addEventListener('keydown',e=>{
+      const parent=e.target.closest('[data-id]');if(!parent)return;
+      if(e.key==='Enter'||e.key===' '){e.preventDefault();select(parent.dataset.id);}
+    });
+    svg.addEventListener('wheel',e=>{
+      e.preventDefault();const rect=svg.getBoundingClientRect();
+      const factor=Math.exp(-e.deltaY*.0012);
+      setZoom(state.view.scale*factor,e.clientX-rect.left,e.clientY-rect.top);
+    },{passive:false});
+    $('zoomIn').onclick=()=>setZoom(state.view.scale*1.22);
+    $('zoomOut').onclick=()=>setZoom(state.view.scale/1.22);
+    $('fitView').onclick=fitView;
+    $('resetView').onclick=()=>{state.expanded=new Set([ROOT]);state.selected=null;closeDetail();render();fitView();};
+    $('expandAll').onclick=()=>{state.expanded=new Set(TOPICS.filter(n=>getChildren(n.id).length).map(n=>n.id));render();fitView();};
+    $('closePanel').onclick=closeDetail;$('panelShade').onclick=closeDetail;
+    $('copyCode').onclick=copyCode;
+    // On phones, show a legible branch map first. The zoomable SVG remains available.
+    $('staticMap').addEventListener('click',e=>{
+      const link=e.target.closest('a[href^="#topic-"]');
+      if(!link || window.innerWidth>520 || document.documentElement.classList.contains('diagram-mode'))return;
+      e.preventDefault();
+      const id=link.getAttribute('href').slice('#topic-'.length);
+      select(id);
+    });
+    $('showDiagram').onclick=()=>{document.documentElement.classList.add('diagram-mode');fitView();};
+    $('showBranches').onclick=()=>{document.documentElement.classList.remove('diagram-mode');closeDetail();};
+    searchInput.addEventListener('input',updateSearch);
+    searchInput.addEventListener('keydown',e=>{
+      if(e.key==='Escape'){closeSearch();searchInput.blur();}
+      if(e.key==='Enter'){const first=rankMatches(searchInput.value)[0];if(first){select(first.id,{expand:false});searchInput.value='';}}
+    });
+    document.addEventListener('pointerdown',e=>{if(!e.target.closest('.search-area'))closeSearch();});
+    document.addEventListener('keydown',e=>{
+      if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();searchInput.focus();}
+      if(e.key==='Escape'){closeSearch();closeDetail();}
+    });
+    if(typeof ResizeObserver!=='undefined')new ResizeObserver(()=>{if(state.initial){render();fitView();state.initial=false;}}).observe(mapArea);
+    window.addEventListener('resize',()=>{if(state.positions.size)fitView();});
+  }
+  function init(){
+    renderNav();render();setupEvents();
+    document.documentElement.classList.add('js-ready');
+    requestAnimationFrame(()=>{fitView();state.initial=false;});
+  }
+  init();
+})();
+
+</script>
+</body>
+</html>
